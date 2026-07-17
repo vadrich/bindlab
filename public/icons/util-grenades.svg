@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" ry="72" fill="none" stroke="#22d3ee" stroke-width="28"/>
+
+  <!-- HE grenade — tilted, cleaner silhouette -->
+  <g transform="translate(256,270) rotate(-18)">
+    <!-- body -->
+    <path
+      d="M-52 -28
+         Q-52 -52 -28 -52
+         L28 -52
+         Q52 -52 52 -28
+         L52 78
+         Q52 108 0 108
+         Q-52 108 -52 78 Z"
+      fill="#22d3ee"
+    />
+    <!-- top collar -->
+    <rect x="-36" y="-68" width="72" height="22" rx="8" fill="#22d3ee"/>
+    <!-- fuse stem -->
+    <rect x="-10" y="-92" width="20" height="28" rx="6" fill="#22d3ee"/>
+    <!-- spoon / lever -->
+    <path
+      d="M-8 -78
+         C-8 -110 8 -118 28 -112
+         L42 -70
+         Q28 -78 12 -74
+         L8 -56
+         Q-8 -60 -8 -78 Z"
+      fill="#22d3ee"
+    />
+    <!-- pin ring -->
+    <circle cx="48" cy="-118" r="16" fill="none" stroke="#22d3ee" stroke-width="11"/>
+    <line x1="36" y1="-106" x2="22" y2="-90" stroke="#22d3ee" stroke-width="10" stroke-linecap="round"/>
+    <!-- body grooves (cutouts) -->
+    <line x1="-34" y1="-4" x2="34" y2="-4" stroke="#000000" stroke-width="7" stroke-linecap="round" opacity="0.45"/>
+    <line x1="-34" y1="28" x2="34" y2="28" stroke="#000000" stroke-width="7" stroke-linecap="round" opacity="0.45"/>
+    <line x1="-34" y1="60" x2="34" y2="60" stroke="#000000" stroke-width="7" stroke-linecap="round" opacity="0.45"/>
+    <!-- side highlight notches -->
+    <circle cx="-28" cy="12" r="5" fill="#000000" opacity="0.4"/>
+    <circle cx="28" cy="12" r="5" fill="#000000" opacity="0.4"/>
+    <circle cx="-28" cy="44" r="5" fill="#000000" opacity="0.4"/>
+    <circle cx="28" cy="44" r="5" fill="#000000" opacity="0.4"/>
+  </g>
+</svg>

@@ -1,0 +1,32 @@
+{
+  "name": "BindLab",
+  "short_name": "BindLab",
+  "description": "Free CS2 bind & settings generator: buy menu, jumpthrow, crosshair, FPS, unbind.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05080e",
+  "theme_color": "#05080e",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["games", "utilities"]
+}

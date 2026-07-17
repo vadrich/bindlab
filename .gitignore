@@ -1,0 +1,46 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules
+
+# Build
+dist
+dist-ssr
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+!.env.example
+
+
+# Local restore snapshots (optional; keep on disk)
+# .snapshots/
+
+
+# Local / temp
+person/
+wallhaven.json
+wh-dust.json
+wh2.json
+wh-a.json
+wh-b.json
+wh-c.json
+steam730.json

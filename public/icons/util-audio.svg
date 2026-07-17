@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" ry="72" fill="none" stroke="#22d3ee" stroke-width="28"/>
+  
+  <!-- headset band -->
+  <path d="M150 275 V220 A106 106 0 0 1 362 220 V275" fill="none" stroke="#22d3ee" stroke-width="24" stroke-linecap="round"/>
+  <!-- ear cups -->
+  <rect x="120" y="255" width="52" height="100" rx="20" fill="#22d3ee"/>
+  <rect x="340" y="255" width="52" height="100" rx="20" fill="#22d3ee"/>
+  <rect x="132" y="270" width="28" height="70" rx="10" fill="#000000"/>
+  <rect x="352" y="270" width="28" height="70" rx="10" fill="#000000"/>
+  <!-- equalizer -->
+  <rect x="205" y="250" width="14" height="50" rx="4" fill="#22d3ee"/>
+  <rect x="228" y="230" width="14" height="70" rx="4" fill="#22d3ee"/>
+  <rect x="251" y="215" width="14" height="85" rx="4" fill="#22d3ee"/>
+  <rect x="274" y="230" width="14" height="70" rx="4" fill="#22d3ee"/>
+  <rect x="297" y="250" width="14" height="50" rx="4" fill="#22d3ee"/>
+
+</svg>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" ry="72" fill="none" stroke="#22d3ee" stroke-width="28"/>
+  
+  <circle cx="256" cy="256" r="132" fill="none" stroke="#22d3ee" stroke-width="22"/>
+  <circle cx="256" cy="256" r="78" fill="none" stroke="#22d3ee" stroke-width="10" opacity="0.4"/>
+  <!-- cardinal ticks -->
+  <line x1="256" y1="124" x2="256" y2="150" stroke="#22d3ee" stroke-width="14" stroke-linecap="round"/>
+  <line x1="256" y1="362" x2="256" y2="388" stroke="#22d3ee" stroke-width="14" stroke-linecap="round"/>
+  <line x1="124" y1="256" x2="150" y2="256" stroke="#22d3ee" stroke-width="14" stroke-linecap="round"/>
+  <line x1="362" y1="256" x2="388" y2="256" stroke="#22d3ee" stroke-width="14" stroke-linecap="round"/>
+  <!-- scan wedge -->
+  <path d="M256 256 L338 175 A118 118 0 0 0 256 256 Z" fill="#22d3ee" opacity="0.3"/>
+  <!-- player -->
+  <polygon points="256,228 244,278 256,266 268,278" fill="#22d3ee"/>
+  <!-- blips -->
+  <circle cx="198" cy="200" r="9" fill="#22d3ee"/>
+  <circle cx="318" cy="288" r="9" fill="#22d3ee"/>
+  <circle cx="220" cy="318" r="7" fill="#22d3ee"/>
+  <circle cx="300" cy="210" r="6" fill="#22d3ee" opacity="0.65"/>
+
+</svg>

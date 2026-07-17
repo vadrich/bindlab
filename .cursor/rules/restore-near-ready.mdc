@@ -1,0 +1,19 @@
+---
+description: Restore CS2 Bind Configurator to near-ready snapshot (2026-07-17)
+alwaysApply: true
+---
+
+# Restore point: near-ready-2026-07-17
+
+Project **CS2 Bind Configurator** has a saved restore point at `.snapshots/near-ready-2026-07-17/` (dated 2026-07-17).
+
+If the user asks to return to this result / вернуться к этому результату / restore near-ready / верни сайт как был когда почти готов:
+
+1. Overwrite project files from `.snapshots/near-ready-2026-07-17/` (see `RESTORE_POINT.md` inside it):
+   - Copy `src/`, `public/`, `scripts/` from the snapshot over the live project
+   - Copy root config files from the snapshot (`package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig*`, `tailwind.config.js`, `postcss.config.js`, `index.html`, etc.)
+2. Run `npm install` if needed, then `npm run build`
+
+This snapshot includes: weapons/utilities/unbind + profile/notifications, config search, multi buy binds with conflict alerts, buy bind edit from profile/notifications, profile paste-import, radar/crosshair/chat, lively welcome after guide and «!».
+
+Older snapshots still exist (e.g. `.snapshots/baseline-2025-06-29/`) — only use those if the user explicitly asks for that older baseline.

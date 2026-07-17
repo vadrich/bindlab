@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" ry="72" fill="none" stroke="#22d3ee" stroke-width="28"/>
+  
+  <!-- baseline -->
+  <line x1="128" y1="360" x2="384" y2="360" stroke="#22d3ee" stroke-width="10" stroke-linecap="round" opacity="0.4"/>
+  <!-- bars with caps -->
+  <rect x="138" y="270" width="42" height="90" rx="8" fill="#22d3ee"/>
+  <rect x="198" y="220" width="42" height="140" rx="8" fill="#22d3ee"/>
+  <rect x="258" y="165" width="42" height="195" rx="8" fill="#22d3ee"/>
+  <rect x="318" y="120" width="42" height="240" rx="8" fill="#22d3ee"/>
+  <!-- spark line over bars -->
+  <polyline points="159,265 219,215 279,160 339,115" fill="none" stroke="#22d3ee" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <text x="256" y="410" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="64" font-weight="700" fill="#22d3ee">FPS</text>
+
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" ry="72" fill="none" stroke="#22d3ee" stroke-width="28"/>
+  
+  <!-- chat bubble -->
+  <path d="M140 160 H372 Q400 160 400 188 V300 Q400 328 372 328 H250 L200 380 L210 328 H140 Q112 328 112 300 V188 Q112 160 140 160 Z" fill="none" stroke="#22d3ee" stroke-width="22" stroke-linejoin="round"/>
+  <!-- message lines -->
+  <line x1="160" y1="210" x2="340" y2="210" stroke="#22d3ee" stroke-width="16" stroke-linecap="round"/>
+  <line x1="160" y1="250" x2="300" y2="250" stroke="#22d3ee" stroke-width="16" stroke-linecap="round"/>
+  <line x1="160" y1="290" x2="260" y2="290" stroke="#22d3ee" stroke-width="16" stroke-linecap="round" opacity="0.55"/>
+
+</svg>

@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+:root,
+[data-theme='weapons'] {
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-muted: #fdba74;
+  --accent-soft: rgba(249, 115, 22, 0.18);
+  --accent-soft-bg: rgba(249, 115, 22, 0.25);
+  --accent-ring: #e8860c;
+  --accent-glow: 0 0 20px rgba(232, 134, 12, 0.25);
+  --accent-on: #000000;
+}
+
+[data-theme='utilities'] {
+  --accent: #22d3ee;
+  --accent-hover: #67e8f9;
+  --accent-muted: #67e8f9;
+  --accent-soft: rgba(34, 211, 238, 0.18);
+  --accent-soft-bg: rgba(34, 211, 238, 0.25);
+  --accent-ring: #22d3ee;
+  --accent-glow: 0 0 22px rgba(34, 211, 238, 0.35);
+  --accent-on: #000000;
+}
+
+[data-theme='unbind'] {
+  --accent: #ef4444;
+  --accent-hover: #f87171;
+  --accent-muted: #fca5a5;
+  --accent-soft: rgba(239, 68, 68, 0.18);
+  --accent-soft-bg: rgba(239, 68, 68, 0.25);
+  --accent-ring: #ef4444;
+  --accent-glow: 0 0 22px rgba(239, 68, 68, 0.35);
+  --accent-on: #000000;
+}
+
+[data-theme='profile'] {
+  --accent: #a3e635;
+  --accent-hover: #bef264;
+  --accent-muted: #bef264;
+  --accent-soft: rgba(163, 230, 53, 0.18);
+  --accent-soft-bg: rgba(163, 230, 53, 0.28);
+  --accent-ring: #a3e635;
+  --accent-glow: 0 0 22px rgba(163, 230, 53, 0.35);
+  --accent-on: #000000;
+}
+
+[data-theme='notifications'] {
+  --accent: #c084fc;
+  --accent-hover: #d8b4fe;
+  --accent-muted: #e9d5ff;
+  --accent-soft: rgba(192, 132, 252, 0.18);
+  --accent-soft-bg: rgba(192, 132, 252, 0.28);
+  --accent-ring: #c084fc;
+  --accent-glow: 0 0 22px rgba(192, 132, 252, 0.35);
+  --accent-on: #000000;
+}
+
+[data-theme='home'],
+[data-theme=''] {
+  --accent: #9ca3af;
+  --accent-hover: #d1d5db;
+  --accent-muted: #d1d5db;
+  --accent-soft: rgba(156, 163, 175, 0.18);
+  --accent-soft-bg: rgba(156, 163, 175, 0.22);
+  --accent-ring: #9ca3af;
+  --accent-glow: 0 0 18px rgba(156, 163, 175, 0.25);
+  --accent-on: #000000;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #0a0e14;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121820;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a3340;
+  border-radius: 3px;
+}
+
+@keyframes search-spotlight {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--accent),
+      var(--accent-glow);
+  }
+}
+
+.search-spotlight {
+  animation: search-spotlight 0.7s ease-in-out 4;
+  border-color: var(--accent) !important;
+}
+
+@keyframes welcome-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes welcome-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes welcome-arrow-pulse {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-5px);
+    opacity: 0.85;
+  }
+}
+
+.welcome-logo-in {
+  animation: welcome-logo-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.welcome-fade-up {
+  animation: welcome-fade-up 0.5s ease-out both;
+}
+
+.welcome-row {
+  animation: welcome-fade-up 0.45s ease-out both;
+}
+
+.welcome-arrow-pulse {
+  animation: welcome-arrow-pulse 1.6s ease-in-out 0.8s 3;
+}
