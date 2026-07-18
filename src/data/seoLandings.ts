@@ -1,4 +1,5 @@
 import { SEO_CATALOG } from './seoCatalog.generated'
+import { SEO_P0_LANDINGS } from './seoP0Landings'
 import {
   TOPIC_PACKS,
   type SeoCatalogRow,
@@ -105,7 +106,11 @@ function buildLanding(row: SeoCatalogRow): SeoLanding {
   }
 }
 
-export const SEO_LANDINGS: SeoLanding[] = SEO_CATALOG.map(buildLanding)
+/** P0 short URLs first (search + hub), then mass catalog. */
+export const SEO_LANDINGS: SeoLanding[] = [
+  ...SEO_P0_LANDINGS,
+  ...SEO_CATALOG.map(buildLanding),
+]
 
 export function landingByPath(path: string): SeoLanding | undefined {
   return SEO_LANDINGS.find((l) => l.path === path)
