@@ -6,8 +6,8 @@ export const zh: Messages = {
     subtitle: 'CS2 绑定、设置与购买菜单 — 配置、粘贴到控制台、保存并分享',
   },
   usage: {
-    label: '使用次数',
-    title: '复制绑定的次数（每 15 秒最多计 1 次）',
+    label: '总使用次数',
+    title: '全站用户复制绑定的总次数（每浏览器每 15 秒最多计 1 次）',
   },
   lang: {
     label: '语言',

@@ -92,21 +92,38 @@ async function main() {
   console.log('\n[2/3] Building site...')
   await run('npm', ['run', 'build'])
 
-  console.log('\n[3/3] Deploying to Firebase Hosting...')
-  await run('npx', [
-    'firebase',
-    'deploy',
-    '--only',
-    'hosting',
-    '--project',
-    'bindlab',
-    '--non-interactive',
-  ])
+  console.log('\n[3/3] Deploying Hosting + Firestore rules...')
+  try {
+    await run('npx', [
+      'firebase',
+      'deploy',
+      '--only',
+      'hosting,firestore:rules',
+      '--project',
+      'bindlab',
+      '--non-interactive',
+    ])
+  } catch {
+    console.warn(
+      'Firestore rules deploy failed (create Firestore DB in Console if missing).',
+    )
+    console.warn('Retrying hosting-only deploy...')
+    await run('npx', [
+      'firebase',
+      'deploy',
+      '--only',
+      'hosting',
+      '--project',
+      'bindlab',
+      '--non-interactive',
+    ])
+  }
 
   console.log('\n========================================')
-  console.log(' DONE. Open: https://bindlab.web.app')
+  console.log(' DONE. Open: https://bindlab.ru')
+  console.log(' Fallback: https://bindlab.web.app')
   console.log('========================================\n')
-  console.log('Next: Firebase Hosting → bindlab.ru → Verify DNS')
+  console.log('SEO: submit sitemap — see INDEXING.md')
   console.log('Auth → Settings → Authorized domains → bindlab.ru\n')
 
   try {

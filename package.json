@@ -2,19 +2,22 @@
   "name": "bindlab",
   "private": true,
   "version": "1.0.0",
-  "description": "BindLab — CS2 bind & settings generator with a visual buy menu",
-  "type": "module",
+  "description": "BindLab — CS2 bind & settings generator with custom buy menu",
   "scripts": {
-    "dev": "vite",
-    "build": "npm run og && tsc -b && vite build",
-    "preview": "vite preview",
+    "dev": "next dev",
+    "build": "npm run og && next build && node scripts/postbuild-seo.mjs",
+    "start": "next start",
+    "preview": "npx serve out",
     "og": "node scripts/generate-og-image.mjs",
+    "seo:catalog": "node scripts/generate-seo-catalog.mjs",
     "icons": "node scripts/generate-weapon-icons.mjs",
+    "prebuild": "npm run seo:catalog",
     "deploy": "node scripts/deploy-firebase.mjs",
     "deploy:hosting": "firebase deploy --only hosting --project bindlab --non-interactive"
   },
   "dependencies": {
     "firebase": "^12.16.0",
+    "next": "^15.5.9",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -22,14 +25,12 @@
     "@types/node": "^22.20.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
     "firebase-tools": "^15.24.0",
     "pngjs": "^7.0.0",
     "postcss": "^8.5.3",
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.17",
-    "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "typescript": "~5.8.3"
   }
 }

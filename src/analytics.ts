@@ -1,7 +1,9 @@
 /**
  * Yandex Metrika — pageviews / visitors.
- * Set VITE_YANDEX_METRIKA_ID in .env.local / host env (counter number only).
+ * Set NEXT_PUBLIC_YANDEX_METRIKA_ID in .env.local / host env (counter number only).
  */
+
+import { publicEnv } from './env'
 
 type YmFn = ((...args: unknown[]) => void) & {
   a?: unknown[][]
@@ -21,7 +23,7 @@ function parseCounterId(raw: unknown): number | null {
 }
 
 export function initAnalytics(): void {
-  const id = parseCounterId(import.meta.env.VITE_YANDEX_METRIKA_ID)
+  const id = parseCounterId(publicEnv.yandexMetrikaId())
   if (id == null || typeof window === 'undefined') return
   if (document.querySelector('script[data-ym-tag]')) return
 

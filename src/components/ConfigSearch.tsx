@@ -8,9 +8,15 @@ import { TAB_COLOR } from './HomeIdlePanel'
 interface ConfigSearchProps {
   onNavigate: (target: SearchTarget) => void
   disabled?: boolean
+  /** Pulse the chip (e.g. welcome arrow points here) */
+  hintPulse?: boolean
 }
 
+/** Neutral gray for SEO guides — keep them visually quieter than settings. */
+const GUIDE_COLOR = '#8b929c'
+
 function resultColor(target: SearchTarget): string {
+  if (target.type === 'guide') return GUIDE_COLOR
   if (target.type === 'tab') return TAB_COLOR[target.tab]
   return TAB_COLOR.utilities
 }
@@ -37,6 +43,7 @@ function SearchIcon({ className }: { className?: string }) {
 export function ConfigSearch({
   onNavigate,
   disabled = false,
+  hintPulse = false,
 }: ConfigSearchProps) {
   const m = useMessages()
   const [open, setOpen] = useState(false)
@@ -120,31 +127,60 @@ export function ConfigSearch({
           {results.length > 0 && (
             <ul className="relative z-[1] max-h-[min(420px,60vh)] space-y-2 overflow-y-auto">
               {results.map((row) => {
-                const color = resultColor(row.target)
+                const isGuide = row.kind === 'guide' || row.target.type === 'guide'
+                const color = isGuide ? GUIDE_COLOR : resultColor(row.target)
                 return (
                   <li key={row.entry.id}>
                     <button
                       type="button"
                       onClick={() => go(row.target)}
-                      className="w-full rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-black/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
-                      style={{
-                        borderLeftWidth: 3,
-                        borderLeftColor: color,
-                        boxShadow: `inset 3px 0 12px -6px ${color}`,
-                      }}
+                      className={[
+                        'w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-200 hover:-translate-y-0.5',
+                        isGuide
+                          ? 'border-zinc-700/80 bg-zinc-900/45 hover:border-zinc-600 hover:bg-zinc-900/70'
+                          : 'border-white/10 bg-black/35 hover:bg-black/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]',
+                      ].join(' ')}
+                      style={
+                        isGuide
+                          ? {
+                              borderLeftWidth: 3,
+                              borderLeftColor: GUIDE_COLOR,
+                            }
+                          : {
+                              borderLeftWidth: 3,
+                              borderLeftColor: color,
+                              boxShadow: `inset 3px 0 12px -6px ${color}`,
+                            }
+                      }
                     >
                       <div className="flex items-start justify-between gap-2">
                         <span
-                          className="text-sm font-semibold"
-                          style={{ color }}
+                          className={
+                            isGuide
+                              ? 'text-sm font-semibold text-zinc-400'
+                              : 'text-sm font-semibold'
+                          }
+                          style={isGuide ? undefined : { color }}
                         >
                           {row.title}
                         </span>
-                        <span className="shrink-0 text-[10px] uppercase tracking-wider text-[var(--text-dim)]">
-                          {m.search.open}
+                        <span
+                          className={
+                            isGuide
+                              ? 'shrink-0 text-[10px] uppercase tracking-wider text-zinc-500'
+                              : 'shrink-0 text-[10px] uppercase tracking-wider text-[var(--text-dim)]'
+                          }
+                        >
+                          {isGuide ? m.search.guideBadge : m.search.open}
                         </span>
                       </div>
-                      <p className="mt-1 text-[11px] leading-relaxed text-[var(--text-muted)]">
+                      <p
+                        className={
+                          isGuide
+                            ? 'mt-1 text-[11px] leading-relaxed text-zinc-500'
+                            : 'mt-1 text-[11px] leading-relaxed text-[var(--text-muted)]'
+                        }
+                      >
                         {row.body}
                       </p>
                       {row.command && (
@@ -166,6 +202,7 @@ export function ConfigSearch({
   return (
     <>
       <button
+        id="bindlab-search"
         type="button"
         disabled={disabled}
         onClick={() => setOpen(true)}
@@ -174,6 +211,9 @@ export function ConfigSearch({
         className={[
           'ui-chip text-[#7a8799] hover:text-[var(--text-muted)]',
           disabled ? 'pointer-events-none opacity-40' : '',
+          hintPulse
+            ? 'animate-pulse ring-2 ring-sky-400/70 ring-offset-2 ring-offset-[#05080e] text-sky-300'
+            : '',
         ].join(' ')}
       >
         <SearchIcon className="h-4 w-4" />

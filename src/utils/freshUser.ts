@@ -6,7 +6,7 @@ const USAGE_KEYS = new Set([
 
 /**
  * Wipe app data so the next load looks like a first visit.
- * Keeps the global usage counter (and its cooldown timestamp).
+ * Keeps local usage cache + cooldown (global total lives in Firestore).
  */
 export function resetToFreshUser(): { removed: string[] } {
   const removed: string[] = []

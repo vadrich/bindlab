@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useMessages } from '../i18n/I18nProvider'
-import { formatUsageCount, getUsageCount } from '../utils/usageCounter'
+import {
+  formatUsageCount,
+  getUsageCount,
+  subscribeUsageCount,
+} from '../utils/usageCounter'
 
-/** Top-right badge: how many times users copied a bind. */
+/** Top-right badge: site-wide bind copy count (all users). */
 export function UsageCounter() {
   const m = useMessages()
   const [count, setCount] = useState(() => getUsageCount())
 
   useEffect(() => {
+    const unsub = subscribeUsageCount(setCount)
     const sync = () => setCount(getUsageCount())
     window.addEventListener('cs2-usage-updated', sync)
     window.addEventListener('storage', sync)
     return () => {
+      unsub()
       window.removeEventListener('cs2-usage-updated', sync)
       window.removeEventListener('storage', sync)
     }

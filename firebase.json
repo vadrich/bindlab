@@ -1,6 +1,10 @@
 {
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
   "hosting": {
-    "public": "dist",
+    "public": "out",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true,
     "trailingSlash": false,
@@ -12,7 +16,7 @@
         ]
       },
       {
-        "source": "/assets/**",
+        "source": "/_next/static/**",
         "headers": [
           {
             "key": "Cache-Control",

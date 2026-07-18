@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useAuth } from '../auth/AuthContext'
 import {
   UTILITY_META,
   collectEnabledSettingsGroups,
@@ -52,6 +53,8 @@ export function ProfilePanel({
   onOpenBuyBind,
 }: ProfilePanelProps) {
   const m = useMessages()
+  const { isGuest, signInGoogle, busy, clearError } = useAuth()
+  const profileLocked = isGuest
   const [configName, setConfigName] = useState('')
   const [saved, setSaved] = useState<SavedSiteConfig[]>(() => loadSavedConfigs())
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -127,6 +130,10 @@ export function ProfilePanel({
   const refreshSaved = () => setSaved(loadSavedConfigs())
 
   const handleSave = () => {
+    if (profileLocked) {
+      flash(m.profile.guestLocked)
+      return
+    }
     const name = configName.trim() || m.profile.defaultName
     const snapshot = createSnapshot({
       name,
@@ -143,6 +150,10 @@ export function ProfilePanel({
   }
 
   const handleShare = async (snapshot: ConfigSnapshot, id?: string) => {
+    if (profileLocked) {
+      flash(m.profile.guestLocked)
+      return
+    }
     const url = buildShareUrl(snapshot)
     try {
       await navigator.clipboard.writeText(url)
@@ -155,6 +166,10 @@ export function ProfilePanel({
   }
 
   const handleImportPaste = async () => {
+    if (profileLocked) {
+      flash(m.profile.guestLocked)
+      return
+    }
     try {
       const text = await navigator.clipboard.readText()
       const snapshot = parseImportedConfig(text)
@@ -202,6 +217,28 @@ export function ProfilePanel({
 
       <div className="flex flex-col gap-5 relative z-[1]">
         <AuthPanel />
+
+        {profileLocked ? (
+          <section className="relative rounded-xl border border-amber-400/35 bg-amber-400/10 p-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-amber-200">
+              {m.profile.guestLockedTitle}
+            </p>
+            <p className="mt-2 text-[13px] leading-relaxed text-[#e5e7eb]">
+              {m.profile.guestLocked}
+            </p>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                clearError()
+                void signInGoogle()
+              }}
+              className="mt-3 rounded-lg border border-white/20 bg-white px-3 py-2.5 text-[11px] font-bold uppercase tracking-wide text-[#1a1f28] transition-colors hover:bg-[#f3f4f6] disabled:opacity-50"
+            >
+              {busy ? m.auth.busy : m.auth.google}
+            </button>
+          </section>
+        ) : null}
 
         <section className="ui-panel-inner relative p-4">
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
@@ -324,7 +361,13 @@ export function ProfilePanel({
           )}
         </section>
 
-        <section className="ui-panel-inner relative p-4">
+        <section
+          className={[
+            'ui-panel-inner relative p-4',
+            profileLocked ? 'opacity-45' : '',
+          ].join(' ')}
+          aria-disabled={profileLocked || undefined}
+        >
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
             {m.profile.saveTitle}
           </h3>
@@ -336,12 +379,14 @@ export function ProfilePanel({
               onChange={(e) => setConfigName(e.target.value)}
               placeholder={m.profile.namePlaceholder}
               maxLength={40}
-              className="min-w-0 flex-1 rounded-lg border border-[#2a3340] bg-[#0a0e14] px-3 py-2 text-sm text-white outline-none transition-colors focus:border-[var(--accent)]"
+              disabled={profileLocked}
+              className="min-w-0 flex-1 rounded-lg border border-[#2a3340] bg-[#0a0e14] px-3 py-2 text-sm text-white outline-none transition-colors focus:border-[var(--accent)] disabled:cursor-not-allowed"
             />
             <button
               type="button"
               onClick={handleSave}
-              className="ui-btn-primary px-4 sm:w-auto"
+              disabled={profileLocked}
+              className="ui-btn-primary px-4 sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
             >
               {m.profile.saveButton}
             </button>
@@ -349,13 +394,19 @@ export function ProfilePanel({
           <button
             type="button"
             onClick={() => handleShare(currentShareSnapshot)}
-            className="ui-btn-ghost mt-2 w-full border-[var(--accent)]/50 text-[var(--accent-muted)]"
+            disabled={profileLocked}
+            className="ui-btn-ghost mt-2 w-full border-[var(--accent)]/50 text-[var(--accent-muted)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {copiedId === 'current' ? m.common.copied : m.profile.shareCurrent}
           </button>
         </section>
 
-        <section className="ui-panel-inner relative p-4">
+        <section
+          className={[
+            'ui-panel-inner relative p-4',
+            profileLocked ? 'opacity-45' : '',
+          ].join(' ')}
+        >
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
             {m.profile.importTitle}
           </h3>
@@ -363,13 +414,19 @@ export function ProfilePanel({
           <button
             type="button"
             onClick={handleImportPaste}
-            className="ui-btn-ghost w-full border-[var(--accent)]/50 py-2.5 text-sm text-[var(--accent-muted)]"
+            disabled={profileLocked}
+            className="ui-btn-ghost w-full border-[var(--accent)]/50 py-2.5 text-sm text-[var(--accent-muted)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {m.profile.importButton}
           </button>
         </section>
 
-        <section className="ui-panel-inner relative p-4">
+        <section
+          className={[
+            'ui-panel-inner relative p-4',
+            profileLocked ? 'opacity-45' : '',
+          ].join(' ')}
+        >
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
             {m.profile.savedTitle}
           </h3>
@@ -400,18 +457,24 @@ export function ProfilePanel({
                   <div className="flex flex-wrap gap-1.5">
                     <button
                       type="button"
+                      disabled={profileLocked}
                       onClick={() => {
+                        if (profileLocked) {
+                          flash(m.profile.guestLocked)
+                          return
+                        }
                         onApplySnapshot(cfg.snapshot)
                         flash(m.profile.loadedToast)
                       }}
-                      className="rounded border border-[var(--accent)]/60 bg-[var(--accent-soft)] px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--accent)] hover:border-[var(--accent)]"
+                      className="rounded border border-[var(--accent)]/60 bg-[var(--accent-soft)] px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--accent)] hover:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {m.profile.loadButton}
                     </button>
                     <button
                       type="button"
+                      disabled={profileLocked}
                       onClick={() => handleShare(cfg.snapshot, cfg.id)}
-                      className="rounded border border-[#2a3340] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#9ca3af] hover:border-[var(--accent)]/50 hover:text-[var(--accent)]"
+                      className="rounded border border-[#2a3340] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#9ca3af] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {copiedId === cfg.id
                         ? m.common.copied
@@ -419,11 +482,16 @@ export function ProfilePanel({
                     </button>
                     <button
                       type="button"
+                      disabled={profileLocked}
                       onClick={() => {
+                        if (profileLocked) {
+                          flash(m.profile.guestLocked)
+                          return
+                        }
                         deleteSavedConfig(cfg.id)
                         refreshSaved()
                       }}
-                      className="rounded border border-[#2a3340] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#6b7280] hover:border-red-500/50 hover:text-red-400"
+                      className="rounded border border-[#2a3340] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#6b7280] hover:border-red-500/50 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {m.profile.deleteButton}
                     </button>

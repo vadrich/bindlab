@@ -6,8 +6,9 @@ export const es: Messages = {
     subtitle: 'Binds, ajustes y menú de compra para CS2 — crea, pega en consola, guarda y comparte',
   },
   usage: {
-    label: 'Usos',
-    title: 'Veces que se copió un bind (máx. 1 cada 15 s)',
+    label: 'Usos totales',
+    title:
+      'Veces que todos los usuarios copiaron un bind en el sitio (máx. 1 cada 15 s por navegador)',
   },
   lang: {
     label: 'Idioma',

@@ -6,6 +6,7 @@ export type SearchTarget =
       type: 'tab'
       tab: 'weapons' | 'utilities' | 'unbind' | 'profile' | 'notifications'
     }
+  | { type: 'guide'; path: string }
 
 export interface SearchCatalogEntry {
   id: string

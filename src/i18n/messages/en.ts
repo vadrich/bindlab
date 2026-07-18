@@ -20,6 +20,8 @@ export type Messages = {
     noResults: string
     open: string
     example: string
+    guideBadge: string
+    closeGuide: string
     tabHint: {
       weapons: string
       utilities: string
@@ -258,6 +260,8 @@ export type Messages = {
     pasteClose: string
     pastePrev: string
     pasteNext: string
+    guestLockedTitle: string
+    guestLocked: string
   }
   auth: {
     title: string
@@ -266,31 +270,21 @@ export type Messages = {
     notConfigured: string
     signedInHint: string
     anonymousLabel: string
+    guestLabel: string
+    guestButton: string
+    guestHint: string
+    guestSignedInHint: string
     signOut: string
-    signInTab: string
-    signUpTab: string
-    nameLabel: string
-    namePlaceholder: string
-    emailLabel: string
-    passwordLabel: string
-    signInSubmit: string
-    signUpSubmit: string
     busy: string
-    forgotPassword: string
-    resetNeedEmail: string
-    resetSent: string
     or: string
     google: string
-    errorInvalidEmail: string
     errorUserDisabled: string
-    errorBadCredentials: string
-    errorEmailInUse: string
-    errorWeakPassword: string
     errorPopupClosed: string
     errorPopupBlocked: string
     errorTooMany: string
     errorNetwork: string
     errorNotAllowed: string
+    errorUnauthorizedDomain: string
     errorNotConfigured: string
     errorGeneric: string
   }
@@ -317,6 +311,7 @@ export type Messages = {
     authGateTitle: string
     authGateBody: string
     authGateGoogle: string
+    authGateGuest: string
     authGateSignedIn: string
     authGateLoading: string
     authGateNotConfigured: string
@@ -329,6 +324,8 @@ export type Messages = {
     homeLeftHint: string
     homeHeaderHint: string
     homeStartFooter: string
+    homeSearchHint: string
+    homeSearchHintSub: string
     homeRmbTitle: string
     homeRmbBody: string
   }
@@ -391,8 +388,9 @@ export const en: Messages = {
     subtitle: 'Binds, settings and buy menus for CS2 — build, copy to console, save and share',
   },
   usage: {
-    label: 'Uses',
-    title: 'How many times a bind was copied (at most once per 15 sec)',
+    label: 'Total uses',
+    title:
+      'How many times all users copied a bind on this site (at most once per 15 sec per browser)',
   },
   lang: {
     label: 'Language',
@@ -400,12 +398,14 @@ export const en: Messages = {
   },
   search: {
     label: 'Search',
-    openTitle: 'Find a setting, command or bind (Ctrl+K)',
-    placeholder: 'Crosshair, jumpthrow, say GG, unbindall…',
-    hint: 'Type what you want to change, a console command, or a wish — we suggest where to configure it.',
-    noResults: 'Nothing found. Try another word: crosshair, grenades, fps, profile…',
+    openTitle: 'Find a setting, command, bind or CS2 guide (Ctrl+K)',
+    placeholder: 'Buy bind, Dust 2, jumpthrow, crosshair…',
+    hint: 'Search settings and CS2 guides without leaving BindLab. Guides open in a panel here.',
+    noResults: 'Nothing found. Try: buy binds, dust2, jumpthrow, crosshair, fps…',
     open: 'Open',
     example: 'Example',
+    guideBadge: 'Guide',
+    closeGuide: 'Close',
     tabHint: {
       weapons: 'Buy menu — pick weapons and copy a buy bind.',
       utilities: 'All settings and binds — open the card you need.',
@@ -783,40 +783,36 @@ export const en: Messages = {
     pasteClose: 'Close',
     pastePrev: 'Previous part',
     pasteNext: 'Next part',
+    guestLockedTitle: 'Guest mode',
+    guestLocked:
+      'Profile save, share, import and saved configs need a Google account. You can still browse binds and build configs.',
   },
   auth: {
     title: 'Account',
-    lead: 'Sign in with email or Google (Firebase free plan). Guests can still use the site locally.',
+    lead: 'Sign in with Google to unlock Profile, or continue as a guest for a quick try.',
     loading: 'Checking sign-in…',
     notConfigured:
-      'Firebase is not configured yet. Add VITE_FIREBASE_* keys to .env.local (see .env.example).',
+      'Firebase is not configured yet. Add NEXT_PUBLIC_FIREBASE_* keys to .env.local (see .env.example).',
     signedInHint: 'You are signed in. Bind configs still save in this browser for now.',
     anonymousLabel: 'Signed in',
+    guestLabel: 'Guest',
+    guestButton: 'Continue as guest',
+    guestHint:
+      'Guest mode unlocks the site, but Profile save / share / import stay locked until Google sign-in.',
+    guestSignedInHint:
+      'You are in guest mode. Sign in with Google to unlock Profile features.',
     signOut: 'Sign out',
-    signInTab: 'Sign in',
-    signUpTab: 'Sign up',
-    nameLabel: 'Name (optional)',
-    namePlaceholder: 'How we call you',
-    emailLabel: 'Email',
-    passwordLabel: 'Password',
-    signInSubmit: 'Sign in',
-    signUpSubmit: 'Create account',
     busy: 'Please wait…',
-    forgotPassword: 'Forgot password?',
-    resetNeedEmail: 'Enter your email above, then try again.',
-    resetSent: 'Password reset email sent — check your inbox.',
     or: 'or',
     google: 'Continue with Google',
-    errorInvalidEmail: 'Invalid email address.',
     errorUserDisabled: 'This account is disabled.',
-    errorBadCredentials: 'Wrong email or password.',
-    errorEmailInUse: 'This email is already registered — sign in instead.',
-    errorWeakPassword: 'Password must be at least 6 characters.',
     errorPopupClosed: 'Google sign-in was closed.',
     errorPopupBlocked: 'Popup was blocked — allow popups for this site.',
     errorTooMany: 'Too many attempts — wait a bit and try again.',
     errorNetwork: 'Network error — check your connection.',
     errorNotAllowed: 'This sign-in method is disabled in Firebase Console.',
+    errorUnauthorizedDomain:
+      'This domain is not allowed for sign-in. Add bindlab.ru in Firebase Console → Authentication → Settings → Authorized domains.',
     errorNotConfigured: 'Firebase Auth is not configured.',
     errorGeneric: 'Something went wrong. Try again.',
   },
@@ -848,15 +844,16 @@ export const en: Messages = {
     importantRead: 'Important · read before you continue',
     gotIt: 'Got it · start',
     gotItWait: 'Wait {n}…',
-    gotItNeedAuth: 'Sign in with Google to start',
-    authGateTitle: 'Sign in to continue',
+    gotItNeedAuth: 'Sign in with Google or continue as guest',
+    authGateTitle: 'Sign in',
     authGateBody:
-      'Create a free account with Google (or sign in if you already have one). The Start button turns on only after that — so your progress can stay with you.',
+      'Continue with Google for full Profile access, or enter as a guest for a quick try (Profile save/share stay locked). Start unlocks after you choose.',
     authGateGoogle: 'Continue with Google',
+    authGateGuest: 'Continue as guest',
     authGateSignedIn: 'Signed in as {name} — you can press Start',
     authGateLoading: 'Checking sign-in…',
     authGateNotConfigured:
-      'Google sign-in is not configured on this build — Start will unlock after the short wait.',
+      'Sign-in is not configured on this build — Start will unlock after the short wait.',
     continue: 'Continue',
     homeEyebrowStart: 'You’re in — let’s build binds',
     homeEyebrowTour: 'Quick tour · tap ! anytime',
@@ -864,14 +861,17 @@ export const en: Messages = {
     homeLead:
       'Pick a colored section on the left and start assembling. The arrows point the way — Weapons, Utilities, or Reset.',
     homeTourLead:
-      'Five zones, one map. Follow the colors: left tabs for building, header for Profile and Alerts. Right-click any icon for a deeper guide.',
+      'Pick a colored section on the left and start assembling. The arrows point the way — Weapons, Utilities, or Reset.',
     homeLeftHint: 'Start here · left side',
     homeHeaderHint: 'Also up top · header',
     homeStartFooter:
-      'Curious about everything? Hit ! next to the title — a short tour of all five sections.',
-    homeRmbTitle: 'Want the full tip for a tab?',
+      'Need an answer? Magnifier in the header or Ctrl+K — search settings and CS2 guides on the site.',
+    homeSearchHint: 'Looking for an answer? Use search ↑',
+    homeSearchHintSub:
+      'Magnifier in the header or Ctrl+K — settings and CS2 guides stay inside BindLab',
+    homeRmbTitle: 'Looking for an answer? Use search ↑',
     homeRmbBody:
-      'Right-click any colored icon (Weapons, Utilities, Reset, Profile, Alerts) → “View instruction”. Instant refresh, anytime.',
+      'Magnifier in the header or Ctrl+K — settings and CS2 guides stay inside BindLab',
   },
   tips: {
     gotIt: 'Got it',

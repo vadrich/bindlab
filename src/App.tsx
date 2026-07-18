@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArsenalTabs } from './components/ArsenalTabs'
 import { BuyGrid } from './components/BuyGrid'
@@ -8,9 +10,11 @@ import {
 } from './components/HeaderModeButton'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
 import { ConfigSearch } from './components/ConfigSearch'
+import { GuideArticleModal } from './components/GuideArticleModal'
 import { Sidebar } from './components/Sidebar'
 import { UsageCounter } from './components/UsageCounter'
 import type { SearchTarget } from './data/configSearch'
+import { landingByPath } from './data/seoLandings'
 import { ITEM_MAP } from './data/items'
 import {
   applyBindKeyToUtility,
@@ -62,7 +66,11 @@ export type { UtilityView }
 
 export default function App() {
   const m = useMessages()
-  const { configured: authConfigured, ready: authReady, user } = useAuth()
+  const {
+    configured: authConfigured,
+    ready: authReady,
+    hasAccess,
+  } = useAuth()
   const [boot] = useState(loadAppState)
   const [selectedIds, setSelectedIds] = useState(boot.selectedIds)
   const [quantities, setQuantities] = useState(boot.quantities)
@@ -97,22 +105,23 @@ export default function App() {
   const [searchHighlight, setSearchHighlight] = useState<SearchTarget | null>(
     null,
   )
+  const [openGuidePath, setOpenGuidePath] = useState<string | null>(null)
   const shareHandled = useRef(false)
 
-  /** Gate the site: Firebase Auth on → must sign in with Google before using the app. */
+  /** Gate the site: Firebase Auth on → Google or guest trial before using the app. */
   useEffect(() => {
     if (!authReady) return
-    if (authConfigured && !user) {
+    if (authConfigured && !hasAccess) {
       setShowGuide(true)
       setGuideLockBlur(true)
       return
     }
-    if (user && hasSeenWelcomeGuide() && guideLockBlur) {
+    if (hasAccess && hasSeenWelcomeGuide() && guideLockBlur) {
       setGuideLockBlur(false)
       setShowGuide(false)
       setHomeHint((prev) => prev ?? 'start')
     }
-  }, [authReady, authConfigured, user, guideLockBlur])
+  }, [authReady, authConfigured, hasAccess, guideLockBlur])
 
   const resetSelectionsToDefaults = () => {
     setSelectedIds([])
@@ -398,6 +407,10 @@ export default function App() {
   }
 
   const navigateFromSearch = (target: SearchTarget) => {
+    if (target.type === 'guide') {
+      setOpenGuidePath(target.path)
+      return
+    }
     setSearchHighlight(target)
     if (target.type === 'utility') {
       openUtility(target.id)
@@ -410,8 +423,32 @@ export default function App() {
     changeArsenalTab(target.tab)
   }
 
+  const openGeneratorFromGuide = (href: string) => {
+    setOpenGuidePath(null)
+    try {
+      const url = new URL(href, 'https://bindlab.ru')
+      const tab = url.searchParams.get('tab')
+      if (tab === 'weapons' || tab === 'utilities' || tab === 'unbind') {
+        changeArsenalTab(tab)
+        return
+      }
+      if (tab === 'profile' || tab === 'notifications') {
+        selectHeaderMode(tab)
+        return
+      }
+    } catch {
+      // fall through
+    }
+    setArsenalTab(null)
+    setHomeHint('start')
+  }
+
+  const openGuideLanding = openGuidePath
+    ? landingByPath(openGuidePath)
+    : null
+
   const dismissGuide = () => {
-    if (authConfigured && !user) return
+    if (authConfigured && !hasAccess) return
     markWelcomeGuideSeen()
     setGuideLockBlur(false)
     setShowGuide(false)
@@ -421,15 +458,14 @@ export default function App() {
 
   const toggleGuide = () => {
     if (guideLockBlur || showClearHistory || pasteViewer || tabTip) return
-    if (homeHint === 'tour') {
-      setHomeHint('start')
-      setArsenalTab(null)
+    // Same welcome + search reminder as after first visit
+    if (homeHint === 'start' || homeHint === 'tour') {
+      setHomeHint(null)
       return
     }
-    // Neutral mode + short map of all five tabs
     setShowGuide(false)
     setArsenalTab(null)
-    setHomeHint('tour')
+    setHomeHint('start')
   }
 
   // Center guide when idle (no tab) or when user reopened !
@@ -479,12 +515,14 @@ export default function App() {
                   onClick={toggleGuide}
                   title={m.guide.openTitle}
                   aria-label={m.guide.openTitle}
-                  aria-pressed={homeHint === 'tour'}
+                  aria-pressed={homeHint === 'start' || homeHint === 'tour'}
                   className={[
                     'inline-grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 transition-all duration-200',
                     'border-[var(--accent)] text-[var(--accent)]',
                     'hover:bg-[var(--accent-soft)] hover:scale-105',
-                    homeHint === 'tour' ? 'bg-[var(--accent-soft)]' : 'bg-transparent',
+                    homeHint === 'start' || homeHint === 'tour'
+                      ? 'bg-[var(--accent-soft)]'
+                      : 'bg-transparent',
                   ].join(' ')}
                 >
                   <GuideBangIcon />
@@ -496,6 +534,9 @@ export default function App() {
               <ConfigSearch
                 disabled={pageBlurred}
                 onNavigate={navigateFromSearch}
+                hintPulse={
+                  (homeHint === 'start' || homeHint === 'tour') && !pageBlurred
+                }
               />
               <LanguageSwitcher />
               <HeaderModeButton
@@ -644,7 +685,7 @@ export default function App() {
       </div>
 
       {((showGuide && guideLockBlur) ||
-        (authReady && authConfigured && !user)) && (
+        (authReady && authConfigured && !hasAccess)) && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/65 px-4 py-8 backdrop-blur-md sm:items-center">
           <WelcomeGuide onDismiss={dismissGuide} locked />
         </div>
@@ -673,6 +714,14 @@ export default function App() {
             onClose={() => setPasteViewer(null)}
           />
         </div>
+      )}
+
+      {openGuideLanding && (
+        <GuideArticleModal
+          landing={openGuideLanding}
+          onClose={() => setOpenGuidePath(null)}
+          onOpenGenerator={openGeneratorFromGuide}
+        />
       )}
     </div>
   )
