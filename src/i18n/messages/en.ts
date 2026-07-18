@@ -259,6 +259,41 @@ export type Messages = {
     pastePrev: string
     pasteNext: string
   }
+  auth: {
+    title: string
+    lead: string
+    loading: string
+    notConfigured: string
+    signedInHint: string
+    anonymousLabel: string
+    signOut: string
+    signInTab: string
+    signUpTab: string
+    nameLabel: string
+    namePlaceholder: string
+    emailLabel: string
+    passwordLabel: string
+    signInSubmit: string
+    signUpSubmit: string
+    busy: string
+    forgotPassword: string
+    resetNeedEmail: string
+    resetSent: string
+    or: string
+    google: string
+    errorInvalidEmail: string
+    errorUserDisabled: string
+    errorBadCredentials: string
+    errorEmailInUse: string
+    errorWeakPassword: string
+    errorPopupClosed: string
+    errorPopupBlocked: string
+    errorTooMany: string
+    errorNetwork: string
+    errorNotAllowed: string
+    errorNotConfigured: string
+    errorGeneric: string
+  }
   guide: {
     openTitle: string
     title: string
@@ -278,6 +313,13 @@ export type Messages = {
     importantRead: string
     gotIt: string
     gotItWait: string
+    gotItNeedAuth: string
+    authGateTitle: string
+    authGateBody: string
+    authGateGoogle: string
+    authGateSignedIn: string
+    authGateLoading: string
+    authGateNotConfigured: string
     continue: string
     homeEyebrowStart: string
     homeEyebrowTour: string
@@ -524,8 +566,8 @@ export const en: Messages = {
       hint: 'Sensitivity, raw input and sens binds',
     },
     inspect: {
-      label: 'Hands / viewmodel',
-      hint: 'On-screen hand and weapon position — like in CS2',
+      label: 'Inspect & drop',
+      hint: 'Inspect skin, drop weapon, hand toggle and viewmodel FOV',
     },
     chat: {
       label: 'Chat',
@@ -655,6 +697,8 @@ export const en: Messages = {
       'audio.volume_down': 'Volume down',
       'mouse.sens_low': 'Lower sensitivity',
       'mouse.sens_reset': 'Reset sensitivity',
+      'inspect.inspect': 'Inspect weapon',
+      'inspect.drop': 'Drop weapon',
       'inspect.hand_toggle': 'Toggle left / right hand',
       'quick.clear': 'Clear console',
       'quick.status': 'status',
@@ -740,6 +784,42 @@ export const en: Messages = {
     pastePrev: 'Previous part',
     pasteNext: 'Next part',
   },
+  auth: {
+    title: 'Account',
+    lead: 'Sign in with email or Google (Firebase free plan). Guests can still use the site locally.',
+    loading: 'Checking sign-in…',
+    notConfigured:
+      'Firebase is not configured yet. Add VITE_FIREBASE_* keys to .env.local (see .env.example).',
+    signedInHint: 'You are signed in. Bind configs still save in this browser for now.',
+    anonymousLabel: 'Signed in',
+    signOut: 'Sign out',
+    signInTab: 'Sign in',
+    signUpTab: 'Sign up',
+    nameLabel: 'Name (optional)',
+    namePlaceholder: 'How we call you',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    signInSubmit: 'Sign in',
+    signUpSubmit: 'Create account',
+    busy: 'Please wait…',
+    forgotPassword: 'Forgot password?',
+    resetNeedEmail: 'Enter your email above, then try again.',
+    resetSent: 'Password reset email sent — check your inbox.',
+    or: 'or',
+    google: 'Continue with Google',
+    errorInvalidEmail: 'Invalid email address.',
+    errorUserDisabled: 'This account is disabled.',
+    errorBadCredentials: 'Wrong email or password.',
+    errorEmailInUse: 'This email is already registered — sign in instead.',
+    errorWeakPassword: 'Password must be at least 6 characters.',
+    errorPopupClosed: 'Google sign-in was closed.',
+    errorPopupBlocked: 'Popup was blocked — allow popups for this site.',
+    errorTooMany: 'Too many attempts — wait a bit and try again.',
+    errorNetwork: 'Network error — check your connection.',
+    errorNotAllowed: 'This sign-in method is disabled in Firebase Console.',
+    errorNotConfigured: 'Firebase Auth is not configured.',
+    errorGeneric: 'Something went wrong. Try again.',
+  },
   guide: {
     openTitle: 'How this site works',
     title: 'Welcome — how it works',
@@ -768,6 +848,15 @@ export const en: Messages = {
     importantRead: 'Important · read before you continue',
     gotIt: 'Got it · start',
     gotItWait: 'Wait {n}…',
+    gotItNeedAuth: 'Sign in with Google to start',
+    authGateTitle: 'Sign in to continue',
+    authGateBody:
+      'Create a free account with Google (or sign in if you already have one). The Start button turns on only after that — so your progress can stay with you.',
+    authGateGoogle: 'Continue with Google',
+    authGateSignedIn: 'Signed in as {name} — you can press Start',
+    authGateLoading: 'Checking sign-in…',
+    authGateNotConfigured:
+      'Google sign-in is not configured on this build — Start will unlock after the short wait.',
     continue: 'Continue',
     homeEyebrowStart: 'You’re in — let’s build binds',
     homeEyebrowTour: 'Quick tour · tap ! anytime',

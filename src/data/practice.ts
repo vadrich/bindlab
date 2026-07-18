@@ -210,9 +210,9 @@ export function buildPracticeSettingsLines(cfg: PracticeConfig): string[] {
   if (cfg.grenadeTrajectory) {
     lines.push('sv_grenade_trajectory_prac_pipreview 1')
   }
-  if (cfg.grenadeTrajectoryClassic) {
-    lines.push('sv_grenade_trajectory 1')
-    lines.push('sv_grenade_trajectory_time 10')
+  // sv_grenade_trajectory — CS:GO classic; usually inactive in CS2
+  if (cfg.grenadeTrajectoryClassic && !cfg.grenadeTrajectory) {
+    lines.push('sv_grenade_trajectory_prac_pipreview 1')
   }
 
   if (cfg.showImpacts) lines.push('sv_showimpacts 1')

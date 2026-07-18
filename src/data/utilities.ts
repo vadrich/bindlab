@@ -5,7 +5,7 @@ import {
 } from './crosshair'
 import {
   buildInspectBindLines,
-  buildHandsSettingsLines,
+  buildInspectSettingsLines,
   DEFAULT_INSPECT,
   RECOMMENDED_INSPECT,
   type InspectConfig,
@@ -47,8 +47,11 @@ import {
 
 export type { CrosshairSettings } from './crosshair'
 export type { InspectConfig } from './inspect'
-export type { HandsConfig, HandsPresetId } from './hands'
-export { HANDS_PRESETS, RECOMMENDED_HANDS } from './hands'
+export {
+  RECOMMENDED_VIEWMODEL,
+  DEFAULT_VIEWMODEL,
+  formatViewmodelLine,
+} from './inspect'
 export type { MouseConfig } from './mouse'
 export type { PracticeConfig } from './practice'
 export {
@@ -196,11 +199,11 @@ export const UTILITY_META: Record<UtilityId, UtilityMeta> = {
   },
   inspect: {
     id: 'inspect',
-    label: 'Руки / viewmodel',
-    mark: 'HND',
+    label: 'Осмотр и дроп',
+    mark: 'INS',
     icon: '/icons/util-inspect.svg',
     kind: 'mixed',
-    hint: 'Положение рук и оружия на экране — как в CS2',
+    hint: 'Осмотр оружия, drop, смена руки и viewmodel FOV',
   },
   chat: {
     id: 'chat',
@@ -247,6 +250,7 @@ export const UTILITY_META: Record<UtilityId, UtilityMeta> = {
 export interface PerformanceConfig {
   fpsMax: boolean
   fpsMaxUi: boolean
+  /** CS2 network graph overlay (`cq_netgraph`). Legacy field name. */
   cqEnabled: boolean
   /** Hide own bullet tracers (less clutter, slight FPS) */
   drawTracersFp: boolean
@@ -576,32 +580,25 @@ function buildPerformanceLines(cfg: PerformanceConfig): string[] {
   const lines: string[] = []
   if (cfg.fpsMax) lines.push('fps_max 0')
   if (cfg.fpsMaxUi) lines.push('fps_max_ui 200')
-  if (cfg.cqEnabled) lines.push('cq_enabled 1')
+  if (cfg.cqEnabled) lines.push('cq_netgraph 1')
   if (cfg.drawTracersFp) lines.push('r_drawtracers_firstperson 0')
   if (cfg.lowLatencySleep) {
     lines.push('engine_low_latency_sleep_after_client_tick true')
   }
-  if (cfg.animatePlayerModels) lines.push('cl_animate_player_models 0')
-  if (cfg.disableFreezecam) lines.push('cl_disablefreezecam 1')
+  // cl_animate_player_models / cl_disablefreezecam / cl_showhelp / cl_disablehtmlmotd — removed in CS2
   if (cfg.gameInstructor) lines.push('gameinstructor_enable 0')
   if (cfg.autoHelp) lines.push('cl_autohelp 0')
-  if (cfg.showHelp) lines.push('cl_showhelp 0')
-  if (cfg.disableHtmlMotd) lines.push('cl_disablehtmlmotd 1')
   return lines
 }
 
 function buildNetworkLines(cfg: NetworkConfig): string[] {
   const lines: string[] = []
-  if (cfg.updaterate) lines.push('cl_updaterate 128')
-  if (cfg.cmdrate) lines.push('cl_cmdrate 128')
+  // cl_updaterate / cl_cmdrate / cl_lagcompensation / cl_predict / net_maxroutable — gone or server-owned in CS2
   if (cfg.rate) lines.push('rate 786432')
   if (cfg.interpRatio) lines.push('cl_interp_ratio 1')
   if (cfg.interp) lines.push('cl_interp 0')
-  if (cfg.lagCompensation) lines.push('cl_lagcompensation 1')
-  if (cfg.predict) lines.push('cl_predict 1')
   if (cfg.maxSearchPing) lines.push('mm_dedicated_search_maxping 80')
   if (cfg.timeout) lines.push('cl_timeout 60')
-  if (cfg.maxRoutable) lines.push('net_maxroutable 1200')
   return lines
 }
 
@@ -718,7 +715,7 @@ function buildAudioSettingsLines(cfg: AudioConfig): string[] {
   const lines: string[] = []
   if (cfg.includeVolume) lines.push(`volume ${formatAudioLevel(cfg.volume)}`)
   if (cfg.includeVoiceScale) {
-    lines.push(`voice_scale ${formatAudioLevel(cfg.voiceScale)}`)
+    lines.push(`snd_voipvolume ${formatAudioLevel(cfg.voiceScale)}`)
   }
   if (cfg.includeMusicVolume) {
     lines.push(`snd_musicvolume ${formatAudioLevel(cfg.musicVolume, 1)}`)
@@ -754,7 +751,7 @@ function buildAudioSettingsLines(cfg: AudioConfig): string[] {
   }
   if (cfg.headphoneEq) lines.push('snd_headphone_eq 1')
   if (cfg.muteLoseFocus) lines.push('snd_mute_losefocus 1')
-  if (cfg.voiceEnable) lines.push('voice_enable 1')
+  if (cfg.voiceEnable) lines.push('voice_modenable 1')
   return lines
 }
 
@@ -767,7 +764,7 @@ function buildAudioBindLines(cfg: AudioConfig): string[] {
   }
   if (cfg.includeVoiceMuteToggle) {
     lines.push(
-      `bind ${sanitizeKey(cfg.voiceMuteToggleKey, 'f6')} "toggle voice_enable 0 1"`,
+      `bind ${sanitizeKey(cfg.voiceMuteToggleKey, 'f6')} "voice_modenable_toggle"`,
     )
   }
   if (cfg.includeVolumeUp) {
@@ -798,7 +795,7 @@ function buildQuickLines(cfg: QuickConfig): string[] {
     lines.push(`bind ${sanitizeKey(cfg.retryKey, 'f12')} "retry"`)
   }
   if (cfg.includePing) {
-    lines.push(`bind ${sanitizeKey(cfg.pingKey, 'o')} "ping"`)
+    lines.push(`bind ${sanitizeKey(cfg.pingKey, 'o')} "player_ping"`)
   }
   if (cfg.includeWriteConfig) {
     lines.push(
@@ -839,12 +836,10 @@ function buildChatLines(cfg: ChatConfig): string[] {
   }
   if (cfg.includeVoiceMute) {
     lines.push(
-      `bind ${sanitizeKey(cfg.voiceMuteKey, 'k')} "toggle voice_enable 0 1"`,
+      `bind ${sanitizeKey(cfg.voiceMuteKey, 'k')} "voice_modenable_toggle"`,
     )
   }
-  if (cfg.includeIgnoreMsg) {
-    lines.push(`bind ${sanitizeKey(cfg.ignoreMsgKey, 'j')} "ignoremsg"`)
-  }
+  // ignoremsg removed in CS2 — use Settings → Communication / mute options
   return lines
 }
 
@@ -889,7 +884,7 @@ function linesForUtility(
       }
     case 'inspect':
       return {
-        settings: buildHandsSettingsLines(config.inspect),
+        settings: buildInspectSettingsLines(config.inspect),
         binds: buildInspectBindLines(config.inspect),
       }
     case 'quick':
@@ -1031,8 +1026,10 @@ export function readUtilityBindKey(
       if (config.mouse.includeSensReset) return config.mouse.sensResetKey
       return config.mouse.sensLowKey
     case 'inspect':
+      if (config.inspect.includeInspect) return config.inspect.inspectKey
+      if (config.inspect.includeDrop) return config.inspect.dropKey
       if (config.inspect.includeHandToggle) return config.inspect.handToggleKey
-      return config.inspect.handToggleKey
+      return config.inspect.inspectKey
     case 'quick': {
       const q = config.quick
       if (q.includeClear) return q.clearKey
@@ -1126,6 +1123,8 @@ export function applyBindKeyToUtility(
         ...config,
         inspect: {
           ...config.inspect,
+          inspectKey: k,
+          dropKey: k,
           handToggleKey: k,
         },
       }

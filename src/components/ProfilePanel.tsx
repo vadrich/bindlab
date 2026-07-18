@@ -7,6 +7,7 @@ import {
 } from '../data/utilities'
 import { useMessages } from '../i18n/I18nProvider'
 import { collectActiveBinds } from '../utils/bindConflicts'
+import { AuthPanel } from './AuthPanel'
 import {
   formatBuyLoadout,
   type BuyBind,
@@ -200,6 +201,8 @@ export function ProfilePanel({
       )}
 
       <div className="flex flex-col gap-5 relative z-[1]">
+        <AuthPanel />
+
         <section className="ui-panel-inner relative p-4">
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
             {m.profile.currentBinds}

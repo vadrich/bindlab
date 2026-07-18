@@ -46,6 +46,7 @@ import { SiteLogo } from './components/SiteLogo'
 import { TabTipModal, type TabTipKind } from './components/TabTipModal'
 import { WelcomeGuide } from './components/WelcomeGuide'
 import type { HomeHintMode } from './components/HomeIdlePanel'
+import { useAuth } from './auth/AuthContext'
 import { hasSeenTabTip, markTabTipSeen } from './utils/tabTips'
 import { SEARCH_PULSE_MS } from './utils/searchHighlight'
 import {
@@ -61,6 +62,7 @@ export type { UtilityView }
 
 export default function App() {
   const m = useMessages()
+  const { configured: authConfigured, ready: authReady, user } = useAuth()
   const [boot] = useState(loadAppState)
   const [selectedIds, setSelectedIds] = useState(boot.selectedIds)
   const [quantities, setQuantities] = useState(boot.quantities)
@@ -78,7 +80,7 @@ export default function App() {
   /** Buy bind opened from Profile / Alerts — replaced on next Copy. */
   const [editingBuyBindId, setEditingBuyBindId] = useState<string | null>(null)
   const [showGuide, setShowGuide] = useState(() => !hasSeenWelcomeGuide())
-  /** First visit only: blur site until «Got it». Reopen via ! has no blur. */
+  /** Lock site until welcome dismissed (and Google sign-in when Auth is on). */
   const [guideLockBlur, setGuideLockBlur] = useState(() => !hasSeenWelcomeGuide())
   const [showClearHistory, setShowClearHistory] = useState(false)
   const [pasteViewer, setPasteViewer] = useState<{
@@ -96,6 +98,21 @@ export default function App() {
     null,
   )
   const shareHandled = useRef(false)
+
+  /** Gate the site: Firebase Auth on → must sign in with Google before using the app. */
+  useEffect(() => {
+    if (!authReady) return
+    if (authConfigured && !user) {
+      setShowGuide(true)
+      setGuideLockBlur(true)
+      return
+    }
+    if (user && hasSeenWelcomeGuide() && guideLockBlur) {
+      setGuideLockBlur(false)
+      setShowGuide(false)
+      setHomeHint((prev) => prev ?? 'start')
+    }
+  }, [authReady, authConfigured, user, guideLockBlur])
 
   const resetSelectionsToDefaults = () => {
     setSelectedIds([])
@@ -394,6 +411,7 @@ export default function App() {
   }
 
   const dismissGuide = () => {
+    if (authConfigured && !user) return
     markWelcomeGuideSeen()
     setGuideLockBlur(false)
     setShowGuide(false)
@@ -625,7 +643,8 @@ export default function App() {
         </main>
       </div>
 
-      {showGuide && guideLockBlur && (
+      {((showGuide && guideLockBlur) ||
+        (authReady && authConfigured && !user)) && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/65 px-4 py-8 backdrop-blur-md sm:items-center">
           <WelcomeGuide onDismiss={dismissGuide} locked />
         </div>

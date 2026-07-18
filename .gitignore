@@ -44,3 +44,7 @@ wh-a.json
 wh-b.json
 wh-c.json
 steam730.json
+
+# Firebase local cache
+.firebase/
+

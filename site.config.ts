@@ -1,11 +1,19 @@
 /**
- * Public site URL (no trailing slash).
- * Set VITE_SITE_URL when deploying, e.g. https://bindlab.example.com
+ * Public site URL + brand (re-exports SEO core for Vite / app).
  */
-export const SITE_URL = (
-  process.env.VITE_SITE_URL || 'https://YOUR-DOMAIN.com'
-).replace(/\/$/, '')
+export {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE_RU,
+  SITE_TITLE_EN,
+  SITE_DESCRIPTION_RU,
+  SITE_DESCRIPTION_EN,
+  SITE_TAGLINE_RU,
+  SITE_TAGLINE_EN,
+  META_KEYWORDS,
+  SEMANTIC_CORE,
+  SEO_FAQ_RU,
+} from './seo.config'
 
-export const SITE_NAME = 'BindLab'
-export const SITE_TAGLINE_EN =
-  'Free CS2 bind & settings generator: buy menu, jumpthrow, crosshair, FPS, unbind — copy to console'
+/** @deprecated use SITE_TAGLINE_EN */
+export { SITE_TAGLINE_EN as SITE_TAGLINE } from './seo.config'

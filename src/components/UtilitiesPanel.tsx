@@ -32,9 +32,14 @@ import {
   type UtilitiesConfig,
   type UtilityId,
 } from '../data/utilities'
-import { HANDS_PRESETS, type HandsPresetId } from '../data/hands'
+import {
+  DEFAULT_VIEWMODEL,
+  RECOMMENDED_VIEWMODEL,
+  formatViewmodelLine,
+  isDefaultViewmodelPreset,
+  isRecommendedViewmodelPreset,
+} from '../data/inspect'
 import { CrosshairEditor } from './CrosshairEditor'
-import { HandsPreview } from './HandsPreview'
 import { RadarEditor } from './RadarEditor'
 import { VideoEditor } from './VideoEditor'
 import { BindKeyCapture } from './BindKeyCapture'
@@ -407,6 +412,44 @@ function KeyField({
         compact
         className="bg-[#0a0e14] text-[#e5e7eb]"
       />
+    </div>
+  )
+}
+
+function ViewmodelFovButtons({
+  inspect,
+  onSelectRecommended,
+  onSelectDefault,
+}: {
+  inspect: InspectConfig
+  onSelectRecommended: () => void
+  onSelectDefault: () => void
+}) {
+  const recommendedActive = isRecommendedViewmodelPreset(inspect)
+  const defaultActive = isDefaultViewmodelPreset(inspect)
+  const activeBtn =
+    'rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--accent)] transition-colors hover:border-[var(--accent)]'
+  const idleBtn =
+    'rounded-lg border border-white/10 bg-black/30 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)] transition-colors hover:border-white/25 hover:text-[var(--text)]'
+
+  return (
+    <div className="flex flex-wrap gap-1.5 pt-0.5">
+      <button
+        type="button"
+        aria-pressed={recommendedActive}
+        onClick={onSelectRecommended}
+        className={recommendedActive ? activeBtn : idleBtn}
+      >
+        Рекомендуемый FOV
+      </button>
+      <button
+        type="button"
+        aria-pressed={defaultActive}
+        onClick={onSelectDefault}
+        className={defaultActive ? activeBtn : idleBtn}
+      >
+        Стандартный FOV
+      </button>
     </div>
   )
 }
@@ -1066,8 +1109,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.performance.cqEnabled}
-            label="cq_enabled 1"
-            hint="Включает сжатую очередь команд клиента. Помогает стабильнее отправлять ввод на сервер при микролагах сети; на очень низком пинге разница почти незаметна."
+            label="cq_netgraph 1"
+            hint="Сетевой график в углу во время матча (latency / loss). cq_enabled в CS2 удалён — больше не существует."
             onChange={() =>
               onConfigChange(
                 patchPerf(config, {
@@ -1102,8 +1145,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.performance.animatePlayerModels}
-            label="cl_animate_player_models 0"
-            hint="Отключает анимацию моделей игроков в меню. Меньше нагрузка вне матча, на саму игру почти не влияет."
+            label="cl_animate_player_models 0 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 команда удалена."
             onChange={() =>
               onConfigChange(
                 patchPerf(config, {
@@ -1114,8 +1157,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.performance.disableFreezecam}
-            label="cl_disablefreezecam 1"
-            hint="Отключает freeze-cam после смерти: сразу наблюдаешь за тиммейтом, без замедленного «кинематографа»."
+            label="cl_disablefreezecam 1 (устарело)"
+            hint="Устарело / не пишется в конфиг. Freeze-cam в CS2 так не отключается."
             onChange={() =>
               onConfigChange(
                 patchPerf(config, {
@@ -1148,8 +1191,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.performance.showHelp}
-            label="cl_showhelp 0"
-            hint="Скрывает on-screen help tips. Вместе с autohelp и instructor — чистый HUD."
+            label="cl_showhelp 0 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 on-screen help tips так не скрываются."
             onChange={() =>
               onConfigChange(
                 patchPerf(config, { showHelp: !config.performance.showHelp }),
@@ -1158,8 +1201,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.performance.disableHtmlMotd}
-            label="cl_disablehtmlmotd 1"
-            hint="Не загружает HTML-сообщение дня на community-серверах. Чуть быстрее заход, меньше лишней нагрузки."
+            label="cl_disablehtmlmotd (устарело)"
+            hint="Устарело / не пишется в конфиг. MOTD из CS:GO в CS2 почти нет."
             onChange={() =>
               onConfigChange(
                 patchPerf(config, {
@@ -1174,24 +1217,48 @@ function ActiveSettings({
       {activeId === 'network' && (
         <div className="flex flex-col gap-2">
           <p className="mb-1 rounded border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-2.5 py-2 text-[10px] leading-relaxed text-[var(--accent-muted)]">
-            Чтобы откатить настройку, введи ту же команду с другим значением. Например{' '}
+            В CS2{' '}
             <span className="font-mono font-semibold text-[var(--accent)]">
-              cl_interp_ratio 2
-            </span>{' '}
-            вместо{' '}
-            <span className="font-mono font-semibold text-[var(--accent)]">
-              cl_interp_ratio 1
+              cl_updaterate
             </span>
-            , или{' '}
+            ,{' '}
             <span className="font-mono font-semibold text-[var(--accent)]">
-              mm_dedicated_search_maxping 150
+              cl_cmdrate
+            </span>
+            ,{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              cl_lagcompensation
+            </span>
+            ,{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              cl_predict
             </span>{' '}
-            для дефолтного лимита пинга.
+            и{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              net_maxroutable
+            </span>{' '}
+            устарели и не пишутся в конфиг. Имеют смысл{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              rate
+            </span>
+            ,{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              cl_interp*
+            </span>
+            ,{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              mm_dedicated_search_maxping
+            </span>{' '}
+            и{' '}
+            <span className="font-mono font-semibold text-[var(--accent)]">
+              cl_timeout
+            </span>
+            .
           </p>
           <CheckRow
             checked={config.network.updaterate}
-            label="cl_updaterate 128"
-            hint="Сколько обновлений мира в секунду клиент запрашивает у сервера. 128 — стандарт для серверов 128 tick: позиции врагов и события приходят чаще."
+            label="cl_updaterate 128 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 tickrate задаёт сервер."
             onChange={() =>
               onConfigChange(
                 patchNet(config, {
@@ -1202,8 +1269,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.network.cmdrate}
-            label="cl_cmdrate 128"
-            hint="Сколько ваших команд (движение, выстрелы) в секунду уходит на сервер. 128 подстраивается под тикрейт 128 — ввод обрабатывается чаще."
+            label="cl_cmdrate 128 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 tickrate задаёт сервер."
             onChange={() =>
               onConfigChange(
                 patchNet(config, { cmdrate: !config.network.cmdrate }),
@@ -1221,7 +1288,7 @@ function ActiveSettings({
           <CheckRow
             checked={config.network.interpRatio}
             label="cl_interp_ratio 1"
-            hint="Меньше интерполяции — картинка ближе к «живому» состоянию сервера. На нестабильном пинге поставь 2 вручную в консоли."
+            hint="На официальных серверах CS2 часто блокируется. На нестабильном пинге community иногда ставят 2."
             onChange={() =>
               onConfigChange(
                 patchNet(config, {
@@ -1233,15 +1300,15 @@ function ActiveSettings({
           <CheckRow
             checked={config.network.interp}
             label="cl_interp 0"
-            hint="Просит движок сам выбрать минимальный буфер интерполяции по ratio и сети. Вручную крутить cl_interp в CS2 почти бессмысленно."
+            hint="В CS2 вручную почти бессмысленно — буфер выбирает сервер/движок."
             onChange={() =>
               onConfigChange(patchNet(config, { interp: !config.network.interp }))
             }
           />
           <CheckRow
             checked={config.network.lagCompensation}
-            label="cl_lagcompensation 1"
-            hint="Сервер учитывает ваш пинг при регистрации попаданий. Держите включённым — выключение портит hitreg."
+            label="cl_lagcompensation 1 (устарело)"
+            hint="Устарело / не пишется в конфиг. Hitreg в CS2 серверный."
             onChange={() =>
               onConfigChange(
                 patchNet(config, {
@@ -1252,8 +1319,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.network.predict}
-            label="cl_predict 1"
-            hint="Клиент предсказывает ваше движение локально — управление ощущается отзывчивее. Без этого персонаж «плывёт» за сервером."
+            label="cl_predict 1 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 команда серверная/удалена."
             onChange={() =>
               onConfigChange(
                 patchNet(config, { predict: !config.network.predict }),
@@ -1284,8 +1351,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.network.maxRoutable}
-            label="net_maxroutable 1200"
-            hint="Максимальный размер UDP-пакета. 1200 уменьшает фрагментацию на плохих маршрутах; на стабильном канале обычно незаметно."
+            label="net_maxroutable 1200 (устарело)"
+            hint="Устарело / не пишется в конфиг. В CS2 размер пакета так не задаётся."
             onChange={() =>
               onConfigChange(
                 patchNet(config, {
@@ -1454,8 +1521,8 @@ function ActiveSettings({
             onValueChange={(volume) => onConfigChange(patchAudio(config, { volume }))}
           />
           <AudioSlider
-            label="voice_scale"
-            hint="Громкость голосового чата тиммейтов."
+            label="snd_voipvolume"
+            hint="Громкость голосового чата тиммейтов (бывш. voice_scale)."
             enabled={config.audio.includeVoiceScale}
             value={config.audio.voiceScale}
             min={0}
@@ -1666,8 +1733,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.audio.voiceEnable}
-            label="voice_enable 1"
-            hint="Включает голосовой чат (базовая настройка)."
+            label="voice_modenable 1"
+            hint="Включает голосовой чат (бывш. voice_enable)."
             onChange={() =>
               onConfigChange(
                 patchAudio(config, { voiceEnable: !config.audio.voiceEnable }),
@@ -1700,8 +1767,8 @@ function ActiveSettings({
           </AudioHintRow>
           <AudioHintRow
             checked={config.audio.includeVoiceMuteToggle}
-            label="Mute voice (toggle)"
-            hint="Вкл/выкл голосовой чат одной клавишей."
+            label="voice_modenable_toggle"
+            hint="Вкл/выкл голосовой чат одной клавишей (бывш. toggle voice_enable)."
             onChange={() =>
               onConfigChange(
                 patchAudio(config, {
@@ -1770,8 +1837,8 @@ function ActiveSettings({
       {activeId === 'mouse' && (
         <div className="flex flex-col gap-3">
           <p className="text-[10px] leading-relaxed text-[#4b5563]">
-            Sensitivity, raw input и бинды быстрой смены сенсы (AWP /
-            clutch). Положение рук — во вкладке «Руки / viewmodel».
+            Sensitivity и бинды быстрой смены сенсы (AWP / clutch). Viewmodel
+            FOV — во вкладке «Осмотр и дроп».
           </p>
 
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">
@@ -1797,7 +1864,7 @@ function ActiveSettings({
             }
           />
           <AudioSlider
-            label="zoom_sensitivity_ratio_mouse"
+            label="zoom_sensitivity_ratio"
             hint="Множитель сенсы в прицеле (AWP / scoped)."
             enabled={config.mouse.includeZoomSens}
             value={config.mouse.zoomSens}
@@ -1817,8 +1884,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.mouse.rawInput}
-            label="m_rawinput 1"
-            hint="Сырой ввод мыши — без ускорения Windows."
+            label="m_rawinput 1 (устарело)"
+            hint="Устарело / не пишется в конфиг. CS2 убрал m_rawinput."
             onChange={() =>
               onConfigChange(
                 patchMouse(config, { rawInput: !config.mouse.rawInput }),
@@ -1827,8 +1894,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.mouse.noAccel}
-            label="Без ускорения мыши"
-            hint="m_customaccel 0 + m_mouseaccel1/2 0"
+            label="Без ускорения мыши (устарело)"
+            hint="Устарело / не пишется в конфиг. CS2 убрал m_customaccel / m_mouseaccel*."
             onChange={() =>
               onConfigChange(
                 patchMouse(config, { noAccel: !config.mouse.noAccel }),
@@ -1905,161 +1972,53 @@ function ActiveSettings({
       {activeId === 'inspect' && (
         <div className="flex flex-col gap-3">
           <p className="text-[10px] leading-relaxed text-[var(--text-dim)]">
-            Крути слайдеры — превью ниже показывает готовый пример «как в CS2»:
-            карта от первого лица и оружие в руках. Так сразу видно, как это
-            будет выглядеть в игре.
+            Осмотр скина, выброс оружия и переключение правой/левой руки. Ниже —
+            рекомендуемый и стандартный viewmodel FOV.
           </p>
-
-          <HandsPreview
-            fov={config.inspect.viewmodelFov}
-            offsetX={config.inspect.viewmodelOffsetX}
-            offsetY={config.inspect.viewmodelOffsetY}
-            offsetZ={config.inspect.viewmodelOffsetZ}
-            rightHand={config.inspect.rightHand}
-          />
-
-          <div className="flex flex-wrap gap-1.5">
-            {(
-              [
-                { id: 'pro' as const, label: 'Pro' },
-                { id: 'center' as const, label: 'Центр' },
-                { id: 'classic' as const, label: 'Classic' },
-                { id: 'close' as const, label: 'Близко' },
-              ] satisfies { id: HandsPresetId; label: string }[]
-            ).map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() =>
-                  onConfigChange(
-                    patchInspect(config, {
-                      includeSettings: true,
-                      ...HANDS_PRESETS[p.id],
-                    }),
-                  )
-                }
-                className="rounded-lg border border-white/10 bg-black/30 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)] transition-colors hover:border-[var(--accent)]/50 hover:text-[var(--accent-muted)]"
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-
-          <CheckRow
-            checked={config.inspect.includeSettings}
-            label="Включить в конфиг"
-            hint="viewmodel_presetpos 0 + fov/offset + cl_righthand"
+          <AudioHintRow
+            checked={config.inspect.includeInspect}
+            label="Осмотр оружия"
+            hint="+lookatweapon — крутить скин, пока зажата клавиша."
             onChange={() =>
               onConfigChange(
                 patchInspect(config, {
-                  includeSettings: !config.inspect.includeSettings,
+                  includeInspect: !config.inspect.includeInspect,
                 }),
               )
             }
-          />
-
-          <AudioSlider
-            label="viewmodel_fov"
-            hint="Размер модели оружия на экране (54–68). Больше = меньше оружия."
-            enabled
-            hideToggle
-            value={config.inspect.viewmodelFov}
-            min={54}
-            max={68}
-            step={0.5}
-            onToggle={() => undefined}
-            onValueChange={(viewmodelFov) =>
-              onConfigChange(patchInspect(config, { viewmodelFov }))
-            }
-          />
-          <AudioSlider
-            label="offset_x (лево / право)"
-            hint="Отрицательно — влево, положительно — вправо (−2.5…2.5)."
-            enabled
-            hideToggle
-            value={config.inspect.viewmodelOffsetX}
-            min={-2.5}
-            max={2.5}
-            step={0.1}
-            onToggle={() => undefined}
-            onValueChange={(viewmodelOffsetX) =>
-              onConfigChange(patchInspect(config, { viewmodelOffsetX }))
-            }
-          />
-          <AudioSlider
-            label="offset_y (дальше / ближе)"
-            hint="Меньше — руки ближе к камере (−2…2)."
-            enabled
-            hideToggle
-            value={config.inspect.viewmodelOffsetY}
-            min={-2}
-            max={2}
-            step={0.1}
-            onToggle={() => undefined}
-            onValueChange={(viewmodelOffsetY) =>
-              onConfigChange(patchInspect(config, { viewmodelOffsetY }))
-            }
-          />
-          <AudioSlider
-            label="offset_z (выше / ниже)"
-            hint="Меньше — руки ниже на экране (−2…2)."
-            enabled
-            hideToggle
-            value={config.inspect.viewmodelOffsetZ}
-            min={-2}
-            max={2}
-            step={0.1}
-            onToggle={() => undefined}
-            onValueChange={(viewmodelOffsetZ) =>
-              onConfigChange(patchInspect(config, { viewmodelOffsetZ }))
-            }
-          />
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                onConfigChange(
-                  patchInspect(config, {
-                    includeSettings: true,
-                    rightHand: true,
-                  }),
-                )
+          >
+            <KeyField
+              label="Клавиша"
+              value={config.inspect.inspectKey}
+              onChange={(inspectKey) =>
+                setConfigKey(patchInspect(config, { inspectKey }), inspectKey)
               }
-              className={[
-                'rounded-lg border px-3 py-2 text-xs font-bold uppercase tracking-wide transition-colors',
-                config.inspect.rightHand
-                  ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]'
-                  : 'border-white/10 text-[var(--text-muted)] hover:border-white/25',
-              ].join(' ')}
-            >
-              Правая рука
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                onConfigChange(
-                  patchInspect(config, {
-                    includeSettings: true,
-                    rightHand: false,
-                  }),
-                )
+            />
+          </AudioHintRow>
+          <AudioHintRow
+            checked={config.inspect.includeDrop}
+            label="Drop оружия"
+            hint="Выбросить текущее оружие на землю."
+            onChange={() =>
+              onConfigChange(
+                patchInspect(config, {
+                  includeDrop: !config.inspect.includeDrop,
+                }),
+              )
+            }
+          >
+            <KeyField
+              label="Клавиша"
+              value={config.inspect.dropKey}
+              onChange={(dropKey) =>
+                setConfigKey(patchInspect(config, { dropKey }), dropKey)
               }
-              className={[
-                'rounded-lg border px-3 py-2 text-xs font-bold uppercase tracking-wide transition-colors',
-                !config.inspect.rightHand
-                  ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]'
-                  : 'border-white/10 text-[var(--text-muted)] hover:border-white/25',
-              ].join(' ')}
-            >
-              Левая рука
-            </button>
-          </div>
-
+            />
+          </AudioHintRow>
           <AudioHintRow
             checked={config.inspect.includeHandToggle}
-            label="Бинд смены руки"
-            hint="toggle cl_righthand 0 1 — переключить левую/правую в игре."
+            label="Смена руки"
+            hint="switchhands — оружие слева / справа (как клавиша H по умолчанию)."
             onChange={() =>
               onConfigChange(
                 patchInspect(config, {
@@ -2079,6 +2038,55 @@ function ActiveSettings({
               }
             />
           </AudioHintRow>
+
+          <div className="mt-1 flex flex-col gap-2 rounded-lg border border-white/10 bg-black/25 p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--accent-muted)]">
+              Viewmodel FOV
+            </p>
+            <p className="font-mono text-[10px] leading-relaxed text-[var(--text-muted)] break-all">
+              Рекомендуемый:{' '}
+              <span className="text-[var(--text)]">
+                {formatViewmodelLine(RECOMMENDED_VIEWMODEL)}
+              </span>
+            </p>
+            <p className="font-mono text-[10px] leading-relaxed text-[var(--text-muted)] break-all">
+              По умолчанию (как у всех):{' '}
+              <span className="text-[var(--text)]">
+                {formatViewmodelLine(DEFAULT_VIEWMODEL)}
+              </span>
+            </p>
+            <ViewmodelFovButtons
+              inspect={config.inspect}
+              onSelectRecommended={() =>
+                onConfigChange(
+                  patchInspect(config, {
+                    includeSettings: true,
+                    ...RECOMMENDED_VIEWMODEL,
+                  }),
+                )
+              }
+              onSelectDefault={() =>
+                onConfigChange(
+                  patchInspect(config, {
+                    includeSettings: true,
+                    ...DEFAULT_VIEWMODEL,
+                  }),
+                )
+              }
+            />
+            <CheckRow
+              checked={config.inspect.includeSettings}
+              label="Включить viewmodel в конфиг"
+              hint="Добавит выбранный FOV/offset в вывод (presetpos 0 или 1)."
+              onChange={() =>
+                onConfigChange(
+                  patchInspect(config, {
+                    includeSettings: !config.inspect.includeSettings,
+                  }),
+                )
+              }
+            />
+          </div>
         </div>
       )}
 
@@ -2155,8 +2163,8 @@ function ActiveSettings({
 
           <AudioHintRow
             checked={config.chat.includeVoiceMute}
-            label="toggle voice_enable"
-            hint="Включает / выключает весь голосовой чат одной клавишей (mute всех)."
+            label="voice_modenable_toggle"
+            hint="Вкл/выкл весь голосовой чат одной клавишей (mute всех)."
             onChange={() =>
               onConfigChange(
                 patchChat(config, {
@@ -2176,8 +2184,8 @@ function ActiveSettings({
 
           <AudioHintRow
             checked={config.chat.includeIgnoreMsg}
-            label="ignoremsg"
-            hint="Циклически меняет фильтр чата: все → только команда → никто. Удобно против спама."
+            label="ignoremsg (устарело)"
+            hint="Устарело / не пишется в конфиг. Фильтр чата — в Settings → Communication."
             onChange={() =>
               onConfigChange(
                 patchChat(config, {
@@ -2287,8 +2295,8 @@ function ActiveSettings({
 
           <AudioHintRow
             checked={config.quick.includePing}
-            label="ping"
-            hint="Показывает ваш текущий пинг до сервера в консоли."
+            label="player_ping"
+            hint="Метка пинга на карте/в мире для тиммейтов (не вывод пинга в консоль)."
             onChange={() =>
               onConfigChange(
                 patchQuick(config, { includePing: !config.quick.includePing }),
@@ -2548,8 +2556,8 @@ function ActiveSettings({
           />
           <CheckRow
             checked={config.practice.grenadeTrajectoryClassic}
-            label="sv_grenade_trajectory 1"
-            hint="Классическая линия полёта гранаты + время отображения 10 сек."
+            label="sv_grenade_trajectory (→ prac preview)"
+            hint="Классическая CS:GO-команда в CS2 обычно мертва. Вместо неё в конфиг пишется sv_grenade_trajectory_prac_pipreview 1."
             onChange={() =>
               onConfigChange(
                 patchPractice(config, {

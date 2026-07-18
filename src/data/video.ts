@@ -8,34 +8,34 @@ export interface VideoConfig {
   /** Keep rendering when window loses focus */
   noFocusSleep: boolean
 
-  /** Multi-threaded materials */
+  /** @deprecated Source 1 leftover — not emitted */
   matQueueMode: boolean
 
-  /** Disable CMAA anti-aliasing (sharper, often more FPS) */
+  /** @deprecated development-only in CS2 — not emitted */
   disableCmaa: boolean
 
-  /** Disable FSR upscaling — native sharpness */
+  /** @deprecated removed / hidden in CS2 — not emitted */
   disableFsr: boolean
 
-  /** Reduce particle density / draw */
+  /** @deprecated cheat/hidden particle cvars — not emitted */
   reduceParticles: boolean
 
-  /** Disable ragdolls */
+  /** Lower ragdoll count (public cvar) */
   disableRagdolls: boolean
 
   /** Hide engine build watermark */
   hideBuildInfo: boolean
 
-  /** Disable depth of field */
+  /** @deprecated removed in CS2 — not emitted */
   disableDof: boolean
 
-  /** Disable SSAO / ambient occlusion if available */
+  /** @deprecated development-only — not emitted */
   disableSsao: boolean
 
   /** Disable animated Steam avatars in UI */
   disableAnimatedAvatars: boolean
 
-  /** Disable wait-for-vertical-sync via known cvar when present */
+  /** @deprecated mat_vsync removed — use in-game video settings */
   disableVsync: boolean
 }
 
@@ -60,16 +60,16 @@ export const RECOMMENDED_VIDEO: VideoConfig = {
   includeGamma: true,
   gamma: 2.0,
   noFocusSleep: true,
-  matQueueMode: true,
-  disableCmaa: true,
-  disableFsr: true,
+  matQueueMode: false,
+  disableCmaa: false,
+  disableFsr: false,
   reduceParticles: false,
   disableRagdolls: true,
   hideBuildInfo: true,
-  disableDof: true,
-  disableSsao: true,
+  disableDof: false,
+  disableSsao: false,
   disableAnimatedAvatars: true,
-  disableVsync: true,
+  disableVsync: false,
 }
 
 export function clampGamma(n: number): number {
@@ -89,25 +89,10 @@ export function buildVideoLines(cfg: VideoConfig): string[] {
     lines.push(`r_fullscreen_gamma ${clampGamma(cfg.gamma)}`)
   }
   if (cfg.noFocusSleep) lines.push('engine_no_focus_sleep 0')
-  if (cfg.matQueueMode) lines.push('mat_queue_mode 2')
-  if (cfg.disableCmaa) lines.push('r_csgo_cmaa_enable 0')
-  if (cfg.disableFsr) {
-    lines.push('r_csgo_fsr_enable 0')
-    lines.push('r_csgo_fsr_upscale 0')
-  }
-  if (cfg.reduceParticles) {
-    lines.push('r_drawparticles 0')
-    lines.push('cl_particle_fallback_base 0')
-    lines.push('cl_particle_fallback_multiplier 0')
-  }
   if (cfg.disableRagdolls) {
     lines.push('cl_ragdoll_limit 0')
-    lines.push('cl_disable_ragdolls 1')
   }
   if (cfg.hideBuildInfo) lines.push('r_show_build_info 0')
-  if (cfg.disableDof) lines.push('r_dof_enable 0')
-  if (cfg.disableSsao) lines.push('r_ssao 0')
   if (cfg.disableAnimatedAvatars) lines.push('cl_allow_animated_avatars 0')
-  if (cfg.disableVsync) lines.push('mat_vsync 0')
   return lines
 }

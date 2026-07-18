@@ -1,13 +1,17 @@
 {
-  "name": "BindLab",
+  "name": "BindLab — бинды CS2",
   "short_name": "BindLab",
-  "description": "Free CS2 bind & settings generator: buy menu, jumpthrow, crosshair, FPS, unbind.",
+  "description": "Собери бинды CS2 за минуту — без ручного набора команд в консоли",
+  "lang": "ru",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
+  "id": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#05080e",
   "theme_color": "#05080e",
-  "lang": "ru",
+  "categories": ["games", "utilities", "entertainment"],
   "icons": [
     {
       "src": "/favicon.svg",
@@ -25,8 +29,21 @@
       "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
-  "categories": ["games", "utilities"]
+  "shortcuts": [
+    {
+      "name": "Оружие / бай-бинды",
+      "short_name": "Оружие",
+      "description": "Собрать buy binds CS2",
+      "url": "/?tab=weapons"
+    },
+    {
+      "name": "Утилиты",
+      "short_name": "Утилиты",
+      "description": "Jumpthrow, прицел, настройки CS2",
+      "url": "/?tab=utilities"
+    }
+  ]
 }

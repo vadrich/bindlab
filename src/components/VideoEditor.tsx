@@ -215,8 +215,8 @@ export function VideoEditor({ value, onChange }: VideoEditorProps) {
         </p>
         <CheckRow
           checked={value.disableVsync}
-          label="mat_vsync 0"
-          hint="Выключает вертикальную синхронизацию — меньше input lag. Если в игре всё ещё есть рывки, проверь VSync и в панели NVIDIA/AMD."
+          label="mat_vsync 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. VSync — в настройках видео игры или панели NVIDIA/AMD."
           onChange={() =>
             onChange(patch(value, { disableVsync: !value.disableVsync }))
           }
@@ -231,40 +231,40 @@ export function VideoEditor({ value, onChange }: VideoEditorProps) {
         />
         <CheckRow
           checked={value.matQueueMode}
-          label="mat_queue_mode 2"
-          hint="Многопоточная обработка материалов — обычно стабильнее FPS на современных CPU."
+          label="mat_queue_mode (устарело)"
+          hint="Устарело / не пишется в конфиг. Остаток Source 1 — в CS2 игнорируется."
           onChange={() =>
             onChange(patch(value, { matQueueMode: !value.matQueueMode }))
           }
         />
         <CheckRow
           checked={value.disableCmaa}
-          label="r_csgo_cmaa_enable 0"
-          hint="Отключает CMAA сглаживание — картинка чуть резче, часто чуть больше FPS."
+          label="r_csgo_cmaa_enable 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. CMAA в CS2 больше не задаётся так."
           onChange={() =>
             onChange(patch(value, { disableCmaa: !value.disableCmaa }))
           }
         />
         <CheckRow
           checked={value.disableFsr}
-          label="r_csgo_fsr_enable 0"
-          hint="Отключает FSR-апскейл — нативная резкость, если играешь в родном разрешении монитора."
+          label="r_csgo_fsr_enable 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. FSR — только в настройках видео игры."
           onChange={() =>
             onChange(patch(value, { disableFsr: !value.disableFsr }))
           }
         />
         <CheckRow
           checked={value.disableDof}
-          label="r_dof_enable 0"
-          hint="Убирает depth of field (размытие по глубине) — чище картинка и чуть легче GPU."
+          label="r_dof_enable 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. Depth of field в CS2 так не отключается."
           onChange={() =>
             onChange(patch(value, { disableDof: !value.disableDof }))
           }
         />
         <CheckRow
           checked={value.disableSsao}
-          label="r_ssao 0"
-          hint="Отключает ambient occlusion — меньше «грязи» в углах, часто плюс к FPS. На части сборок команда может игнорироваться."
+          label="r_ssao 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. SSAO в CS2 так не задаётся."
           onChange={() =>
             onChange(patch(value, { disableSsao: !value.disableSsao }))
           }
@@ -277,8 +277,8 @@ export function VideoEditor({ value, onChange }: VideoEditorProps) {
         </p>
         <CheckRow
           checked={value.reduceParticles}
-          label="r_drawparticles 0"
-          hint="Сильно режет частицы (дым, искры). В превью гаснут жёлтые точки. Может убрать полезный визуальный фидбек — по умолчанию выкл."
+          label="r_drawparticles 0 (устарело)"
+          hint="Устарело / не пишется в конфиг. Частицы в CS2 так не режутся."
           onChange={() =>
             onChange(
               patch(value, { reduceParticles: !value.reduceParticles }),
@@ -287,8 +287,8 @@ export function VideoEditor({ value, onChange }: VideoEditorProps) {
         />
         <CheckRow
           checked={value.disableRagdolls}
-          label="cl_disable_ragdolls 1"
-          hint="Отключает тряпичные трупы — меньше мусора на экране и чуть стабильнее FPS в файтах."
+          label="cl_ragdoll_limit 0"
+          hint="Снижает число тряпичных трупов (cl_ragdoll_limit) — меньше мусора на экране и чуть стабильнее FPS в файтах."
           onChange={() =>
             onChange(
               patch(value, { disableRagdolls: !value.disableRagdolls }),

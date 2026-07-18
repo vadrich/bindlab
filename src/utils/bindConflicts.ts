@@ -100,6 +100,8 @@ export function collectActiveBinds(
   }
 
   const insp = config.inspect
+  if (insp.includeInspect) push(out, insp.inspectKey, 'inspect', 'inspect.inspect')
+  if (insp.includeDrop) push(out, insp.dropKey, 'inspect', 'inspect.drop')
   if (insp.includeHandToggle) {
     push(out, insp.handToggleKey, 'inspect', 'inspect.hand_toggle')
   }

@@ -48,8 +48,8 @@ export const RECOMMENDED_MOUSE: MouseConfig = {
   sensitivity: 1.25,
   includeZoomSens: true,
   zoomSens: 1,
-  rawInput: true,
-  noAccel: true,
+  rawInput: false,
+  noAccel: false,
   includeViewmodelFov: false,
   viewmodelFov: 68,
   includeViewmodelOffsets: false,
@@ -84,15 +84,10 @@ export function buildMouseSettingsLines(cfg: MouseConfig): string[] {
   }
   if (cfg.includeZoomSens) {
     lines.push(
-      `zoom_sensitivity_ratio_mouse ${fmt(clamp(cfg.zoomSens, 0.01, 3))}`,
+      `zoom_sensitivity_ratio ${fmt(clamp(cfg.zoomSens, 0.01, 3))}`,
     )
   }
-  if (cfg.rawInput) lines.push('m_rawinput 1')
-  if (cfg.noAccel) {
-    lines.push('m_customaccel 0')
-    lines.push('m_mouseaccel1 0')
-    lines.push('m_mouseaccel2 0')
-  }
+  // m_rawinput / m_customaccel / m_mouseaccel* — removed in CS2 (OS/Steam Input)
   return lines
 }
 
