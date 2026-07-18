@@ -94,7 +94,11 @@ export const hi: Messages = {
       'अभी कोई कुंजी नहीं — पहले बाइंड कॉपी करें या प्रोफ़ाइल से कॉन्फ़िग लोड करें।',
     unbindHistoryKeys: 'अनबाइंड करने की कुंजियाँ',
     activeUtility: 'सक्रिय',
+    shareAfterCopy: en.sidebar.shareAfterCopy,
+    shareFriend: en.sidebar.shareFriend,
+    shareLinkCopied: en.sidebar.shareLinkCopied,
   },
+  buyPresets: en.buyPresets,
   utilHome: {
     tip: 'सेटिंग्स और बाइंड्स ";" से एक पंक्ति में जुड़ते हैं ताकि CS2 कंसोल (~) सब चलाए। कार्ड से सेक्शन चुनें।',
     settingsTitle: 'सेटिंग्स',

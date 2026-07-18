@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { trackGoal } from '../analytics'
 import { useAuth } from '../auth/AuthContext'
 import {
   UTILITY_META,
@@ -159,6 +160,7 @@ export function ProfilePanel({
       await navigator.clipboard.writeText(url)
       setCopiedId(id ?? 'current')
       setTimeout(() => setCopiedId(null), 2000)
+      trackGoal('share_config', { source: id ? 'saved' : 'current' })
       flash(m.profile.linkCopied)
     } catch {
       flash(m.profile.linkCopyFail)
@@ -368,6 +370,24 @@ export function ProfilePanel({
           ].join(' ')}
           aria-disabled={profileLocked || undefined}
         >
+          <div className="mb-4 rounded-lg border border-[var(--accent)]/45 bg-[var(--accent-soft)] px-3 py-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--accent)]">
+              {m.profile.sharePromoTitle}
+            </p>
+            <p className="mt-1 text-[12px] leading-relaxed text-[#e5e7eb]">
+              {m.profile.sharePromoBody}
+            </p>
+            <button
+              type="button"
+              onClick={() => handleShare(currentShareSnapshot)}
+              disabled={profileLocked}
+              className="ui-btn-primary mt-3 w-full disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {copiedId === 'current'
+                ? m.common.copied
+                : m.profile.shareCurrent}
+            </button>
+          </div>
           <h3 className="mb-1 font-display text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent-muted)]">
             {m.profile.saveTitle}
           </h3>

@@ -5,6 +5,11 @@ import {
 } from '../../seo.config'
 import type { SeoLanding } from '../data/seoLandings'
 import { SEO_LANDINGS } from '../data/seoLandings'
+import {
+  accentColorForTopic,
+  accentLabelForTopic,
+  withAlpha,
+} from '../data/seoTheme'
 
 type Props = {
   landing: SeoLanding
@@ -88,13 +93,26 @@ export function SeoLandingPage({ landing }: Props) {
   const howTo = buildHowToJsonLd(landing)
   const faq = buildFaqJsonLd(landing.faq ?? [])
   const crumbs = buildBreadcrumbJsonLd(landing)
-  const related = SEO_LANDINGS.filter((l) => l.path !== landing.path).slice(
-    0,
-    12,
+  const accent = accentColorForTopic(landing.topic)
+  const accentSoft = withAlpha(accent, 0.12)
+  const accentBorder = withAlpha(accent, 0.35)
+  const related = SEO_LANDINGS.filter(
+    (l) => l.path !== landing.path && l.topic === landing.topic,
   )
+    .slice(0, 8)
+    .concat(
+      SEO_LANDINGS.filter(
+        (l) => l.path !== landing.path && l.topic !== landing.topic,
+      ).slice(0, 4),
+    )
 
   return (
-    <main className="min-h-screen bg-[#141618] px-4 py-12 text-zinc-300">
+    <main
+      className="min-h-screen px-4 py-12 text-zinc-300"
+      style={{
+        background: `linear-gradient(180deg, ${accentSoft} 0%, #101214 220px, #141618 480px)`,
+      }}
+    >
       {howTo ? (
         <script
           type="application/ld+json"
@@ -112,21 +130,38 @@ export function SeoLandingPage({ landing }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs) }}
       />
 
-      <article className="mx-auto max-w-2xl">
+      <article
+        className="mx-auto max-w-2xl rounded-2xl border bg-black/25 px-5 py-8 sm:px-8"
+        style={{
+          borderColor: accentBorder,
+          boxShadow: `inset 4px 0 0 ${accent}, 0 20px 60px rgba(0,0,0,0.35)`,
+        }}
+      >
         <nav className="text-xs text-zinc-500" aria-label="Хлебные крошки">
-          <a href="/" className="text-zinc-400 hover:text-zinc-200 hover:underline">
+          <a
+            href="/"
+            className="hover:underline"
+            style={{ color: accent }}
+          >
             BindLab
           </a>
           <span className="mx-1.5">/</span>
-          <a href="/guides" className="text-zinc-400 hover:text-zinc-200 hover:underline">
+          <a
+            href="/guides"
+            className="hover:underline"
+            style={{ color: accent }}
+          >
             Гайды
           </a>
           <span className="mx-1.5">/</span>
           <span className="text-zinc-500">{landing.h1}</span>
         </nav>
 
-        <p className="mt-4 font-display text-sm font-semibold uppercase tracking-widest text-zinc-500">
-          BindLab · бинды CS2
+        <p
+          className="mt-4 font-display text-sm font-semibold uppercase tracking-widest"
+          style={{ color: accent }}
+        >
+          BindLab · {accentLabelForTopic(landing.topic)}
         </p>
         <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
           {landing.h1}
@@ -137,7 +172,8 @@ export function SeoLandingPage({ landing }: Props) {
         <p className="mt-6">
           <a
             href={landing.ctaHref}
-            className="inline-flex items-center rounded-lg bg-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-100 transition hover:bg-zinc-500"
+            className="inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-semibold text-black transition hover:brightness-110"
+            style={{ backgroundColor: accent }}
           >
             {landing.ctaLabel}
           </a>
@@ -201,7 +237,8 @@ export function SeoLandingPage({ landing }: Props) {
         </p>
 
         <nav
-          className="mt-10 border-t border-zinc-700/80 pt-8"
+          className="mt-10 border-t pt-8"
+          style={{ borderColor: accentBorder }}
           aria-label="Другие гайды"
         >
           <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
@@ -209,22 +246,37 @@ export function SeoLandingPage({ landing }: Props) {
           </h2>
           <ul className="mt-3 flex flex-wrap gap-3 text-sm">
             <li>
-              <a href="/" className="text-zinc-400 hover:text-zinc-200 hover:underline">
+              <a
+                href="/"
+                className="hover:underline"
+                style={{ color: accent }}
+              >
                 Генератор биндов
               </a>
             </li>
             <li>
-              <a href="/guides" className="text-zinc-400 hover:text-zinc-200 hover:underline">
+              <a
+                href="/guides"
+                className="hover:underline"
+                style={{ color: accent }}
+              >
                 Все гайды
               </a>
             </li>
-            {related.map((l) => (
-              <li key={l.path}>
-                <a href={l.path} className="text-zinc-400 hover:text-zinc-200 hover:underline">
-                  {l.h1}
-                </a>
-              </li>
-            ))}
+            {related.map((l) => {
+              const c = accentColorForTopic(l.topic)
+              return (
+                <li key={l.path}>
+                  <a
+                    href={l.path}
+                    className="hover:underline"
+                    style={{ color: c }}
+                  >
+                    {l.h1}
+                  </a>
+                </li>
+              )
+            })}
           </ul>
         </nav>
       </article>

@@ -17,23 +17,26 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
       <stop offset="55%" stop-color="#05080e"/>
       <stop offset="100%" stop-color="#03060b"/>
     </linearGradient>
-    <radialGradient id="glow" cx="20%" cy="0%" r="55%">
-      <stop offset="0%" stop-color="#ff8a1f" stop-opacity="0.35"/>
+    <radialGradient id="glow" cx="15%" cy="10%" r="55%">
+      <stop offset="0%" stop-color="#ff8a1f" stop-opacity="0.45"/>
       <stop offset="100%" stop-color="#ff8a1f" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="glow2" cx="90%" cy="10%" r="45%">
-      <stop offset="0%" stop-color="#2de8ff" stop-opacity="0.22"/>
+    <radialGradient id="glow2" cx="85%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="#2de8ff" stop-opacity="0.28"/>
       <stop offset="100%" stop-color="#2de8ff" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#glow2)"/>
-  <rect x="48" y="48" width="1104" height="534" rx="28" fill="none" stroke="#3a4555" stroke-width="2" opacity="0.7"/>
-  <text x="96" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="800" fill="#ff8a1f">BindLab</text>
-  <text x="96" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600" fill="#c5d0e0">Бинды · бай-меню · настройки CS2</text>
-  <text x="96" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#8b95a5">Собери конфиг · скопируй в консоль · сохрани и поделись</text>
-  <text x="96" y="520" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#6b7280">Free · Web · Multi-language</text>
+  <rect x="48" y="48" width="1104" height="534" rx="28" fill="none" stroke="#3a4555" stroke-width="2" opacity="0.75"/>
+  <text x="96" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="78" font-weight="800" fill="#ff8a1f">BindLab</text>
+  <text x="96" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" fill="#e8eef7">Бинды CS2 за минуту</text>
+  <text x="96" y="340" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#9aa6b8">Бай-меню · jumpthrow · прицел · радар · конфиг</text>
+  <text x="96" y="400" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#7a8799">Собери → скопируй в консоль (~) → поделись ссылкой</text>
+  <rect x="96" y="460" width="320" height="56" rx="14" fill="#ff8a1f"/>
+  <text x="256" y="497" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#0a0e14">bindlab.ru</text>
+  <text x="96" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#6b7280">Бесплатно · без установки · для CS2 / ксго2</text>
 </svg>`
 
 const png = await sharp(Buffer.from(svg)).png().toFile(out)

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { SearchTarget } from '../data/configSearch'
+import { landingByPath } from '../data/seoLandings'
+import { accentColorForTopic } from '../data/seoTheme'
 import { useMessages } from '../i18n/I18nProvider'
 import { searchConfig } from '../utils/configSearch'
 import { TAB_COLOR } from './HomeIdlePanel'
@@ -12,11 +14,11 @@ interface ConfigSearchProps {
   hintPulse?: boolean
 }
 
-/** Neutral gray for SEO guides — keep them visually quieter than settings. */
-const GUIDE_COLOR = '#8b929c'
-
 function resultColor(target: SearchTarget): string {
-  if (target.type === 'guide') return GUIDE_COLOR
+  if (target.type === 'guide') {
+    const landing = landingByPath(target.path)
+    return landing ? accentColorForTopic(landing.topic) : TAB_COLOR.utilities
+  }
   if (target.type === 'tab') return TAB_COLOR[target.tab]
   return TAB_COLOR.utilities
 }
@@ -127,60 +129,33 @@ export function ConfigSearch({
           {results.length > 0 && (
             <ul className="relative z-[1] max-h-[min(420px,60vh)] space-y-2 overflow-y-auto">
               {results.map((row) => {
-                const isGuide = row.kind === 'guide' || row.target.type === 'guide'
-                const color = isGuide ? GUIDE_COLOR : resultColor(row.target)
+                const isGuide =
+                  row.kind === 'guide' || row.target.type === 'guide'
+                const color = resultColor(row.target)
                 return (
                   <li key={row.entry.id}>
                     <button
                       type="button"
                       onClick={() => go(row.target)}
-                      className={[
-                        'w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-200 hover:-translate-y-0.5',
-                        isGuide
-                          ? 'border-zinc-700/80 bg-zinc-900/45 hover:border-zinc-600 hover:bg-zinc-900/70'
-                          : 'border-white/10 bg-black/35 hover:bg-black/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]',
-                      ].join(' ')}
-                      style={
-                        isGuide
-                          ? {
-                              borderLeftWidth: 3,
-                              borderLeftColor: GUIDE_COLOR,
-                            }
-                          : {
-                              borderLeftWidth: 3,
-                              borderLeftColor: color,
-                              boxShadow: `inset 3px 0 12px -6px ${color}`,
-                            }
-                      }
+                      className="w-full rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-black/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                      style={{
+                        borderLeftWidth: 3,
+                        borderLeftColor: color,
+                        boxShadow: `inset 3px 0 12px -6px ${color}`,
+                      }}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <span
-                          className={
-                            isGuide
-                              ? 'text-sm font-semibold text-zinc-400'
-                              : 'text-sm font-semibold'
-                          }
-                          style={isGuide ? undefined : { color }}
+                          className="text-sm font-semibold"
+                          style={{ color }}
                         >
                           {row.title}
                         </span>
-                        <span
-                          className={
-                            isGuide
-                              ? 'shrink-0 text-[10px] uppercase tracking-wider text-zinc-500'
-                              : 'shrink-0 text-[10px] uppercase tracking-wider text-[var(--text-dim)]'
-                          }
-                        >
+                        <span className="shrink-0 text-[10px] uppercase tracking-wider text-[var(--text-dim)]">
                           {isGuide ? m.search.guideBadge : m.search.open}
                         </span>
                       </div>
-                      <p
-                        className={
-                          isGuide
-                            ? 'mt-1 text-[11px] leading-relaxed text-zinc-500'
-                            : 'mt-1 text-[11px] leading-relaxed text-[var(--text-muted)]'
-                        }
-                      >
+                      <p className="mt-1 text-[11px] leading-relaxed text-[var(--text-muted)]">
                         {row.body}
                       </p>
                       {row.command && (

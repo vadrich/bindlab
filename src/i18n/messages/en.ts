@@ -113,6 +113,18 @@ export type Messages = {
     unbindHistoryEmpty: string
     unbindHistoryKeys: string
     activeUtility: string
+    shareAfterCopy: string
+    shareFriend: string
+    shareLinkCopied: string
+  }
+  buyPresets: {
+    title: string
+    hint: string
+    eco: string
+    force: string
+    fullT: string
+    fullCt: string
+    awp: string
   }
   utilHome: {
     tip: string
@@ -262,6 +274,8 @@ export type Messages = {
     pasteNext: string
     guestLockedTitle: string
     guestLocked: string
+    sharePromoTitle: string
+    sharePromoBody: string
   }
   auth: {
     title: string
@@ -520,6 +534,18 @@ export const en: Messages = {
       'No keys yet — copy a bind or load a Profile config that has binds.',
     unbindHistoryKeys: 'Keys to unbind',
     activeUtility: 'Active',
+    shareAfterCopy: 'Copied! Send this setup to a friend — they open the link and get the same binds.',
+    shareFriend: 'Copy share link for a friend',
+    shareLinkCopied: 'Share link copied — paste it in Discord / Telegram',
+  },
+  buyPresets: {
+    title: 'Quick loadouts',
+    hint: 'Tap a preset → set your key if needed → Copy on the right → share with a friend',
+    eco: 'Eco',
+    force: 'Force',
+    fullT: 'Full T',
+    fullCt: 'Full CT',
+    awp: 'AWP',
   },
   utilHome: {
     tip: 'Settings and binds copy as one line joined by ";" so the CS2 console (~) runs everything at once. Pick a section with the cards.',
@@ -786,6 +812,9 @@ export const en: Messages = {
     guestLockedTitle: 'Guest mode',
     guestLocked:
       'Profile save, share, import and saved configs need a Google account. You can still browse binds and build configs.',
+    sharePromoTitle: 'Share with friends',
+    sharePromoBody:
+      'One link opens BindLab with your weapons, keys and utilities already filled in. Perfect for Discord, Telegram and Faceit chats.',
   },
   auth: {
     title: 'Account',

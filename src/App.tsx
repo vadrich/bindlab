@@ -13,7 +13,9 @@ import { ConfigSearch } from './components/ConfigSearch'
 import { GuideArticleModal } from './components/GuideArticleModal'
 import { Sidebar } from './components/Sidebar'
 import { UsageCounter } from './components/UsageCounter'
+import { trackGoal } from './analytics'
 import type { SearchTarget } from './data/configSearch'
+import { BUY_PRESETS } from './data/buyPresets'
 import { landingByPath } from './data/seoLandings'
 import { ITEM_MAP } from './data/items'
 import {
@@ -266,6 +268,24 @@ export default function App() {
     setHomeHint(null)
     setArsenalTab('weapons')
     setBuyConflictBanner(null)
+  }
+
+  const applyBuyPreset = (presetId: string) => {
+    const preset = BUY_PRESETS.find((p) => p.id === presetId)
+    if (!preset) return
+    const quantities: Record<string, number> = {}
+    for (const id of preset.itemIds) {
+      quantities[id] = preset.quantities?.[id] ?? 1
+    }
+    setSelectedIds([...preset.itemIds])
+    setQuantities(quantities)
+    setBindKey(preset.bindKey)
+    setEditingBuyBindId(null)
+    setShowGuide(false)
+    setHomeHint(null)
+    setArsenalTab('weapons')
+    setBuyConflictBanner(null)
+    trackGoal('apply_buy_preset', { preset: presetId })
   }
 
   const cancelEditBuyBind = () => {
@@ -619,6 +639,7 @@ export default function App() {
               quantities={quantities}
               onToggle={toggleItem}
               onSetQuantity={setItemQuantity}
+              onApplyBuyPreset={applyBuyPreset}
               utilitySelectedIds={utilitySelectedIds}
               utilityActiveId={utilityActiveId}
               utilityView={utilityView}

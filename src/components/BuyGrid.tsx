@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { BUY_PRESETS } from '../data/buyPresets'
 import {
   CATEGORY_META,
   CATEGORY_ORDER,
@@ -32,6 +33,8 @@ interface BuyGridProps {
   quantities: Record<string, number>
   onToggle: (id: string) => void
   onSetQuantity: (id: string, qty: number) => void
+  /** One-click buy loadout presets */
+  onApplyBuyPreset?: (presetId: string) => void
   utilitySelectedIds: UtilityId[]
   utilityActiveId: UtilityId | null
   utilityView: 'home' | 'detail'
@@ -62,6 +65,7 @@ export function BuyGrid({
   quantities,
   onToggle,
   onSetQuantity,
+  onApplyBuyPreset,
   utilitySelectedIds,
   utilityActiveId,
   utilityView,
@@ -201,6 +205,28 @@ export function BuyGrid({
             searchSpotlightClass(isTabSearchHighlight(searchHighlight, 'weapons')),
           ].join(' ')}
         >
+          {onApplyBuyPreset ? (
+            <div className="shrink-0 border-b border-[var(--accent)]/25 bg-black/25 px-3 py-2.5">
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-muted)]">
+                {m.buyPresets.title}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {BUY_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => onApplyBuyPreset(preset.id)}
+                    className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-[var(--accent)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft-bg)]"
+                  >
+                    {m.buyPresets[preset.labelKey]}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-[10px] leading-relaxed text-[#6b7280]">
+                {m.buyPresets.hint}
+              </p>
+            </div>
+          ) : null}
           {loadoutConflicts.length > 0 && (
             <div className="shrink-0 border-b border-[var(--accent)]/30 bg-[var(--accent-soft)] px-3 py-2.5">
               <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--accent)]">

@@ -17,11 +17,16 @@ import {
   type UtilitiesConfig,
   type UtilityId,
 } from '../data/utilities'
+import { trackGoal } from '../analytics'
 import { useMessages } from '../i18n/I18nProvider'
 import {
   CS2_CONSOLE_CHAR_LIMIT,
   splitConsoleCommands,
 } from '../utils/consoleChunks'
+import {
+  buildShareUrl,
+  createSnapshot,
+} from '../utils/siteConfigs'
 import {
   formatHistoryDate,
   formatPrice,
@@ -326,6 +331,29 @@ export function Sidebar({
     saveHistory(next)
   }
 
+  const [shareToast, setShareToast] = useState<string | null>(null)
+
+  const copyShareLink = async () => {
+    const url = buildShareUrl(
+      createSnapshot({
+        selectedIds,
+        quantities,
+        bindKey,
+        buyBinds,
+        utilitiesConfig,
+      }),
+    )
+    try {
+      await navigator.clipboard.writeText(url)
+      trackGoal('share_config', { source: 'after_copy' })
+      setShareToast(m.sidebar.shareLinkCopied)
+      window.setTimeout(() => setShareToast(null), 2500)
+    } catch {
+      setShareToast(m.profile.linkCopyFail)
+      window.setTimeout(() => setShareToast(null), 2500)
+    }
+  }
+
   const copyText = async (
     text: string,
     kind: 'settings' | 'binds' | 'all' | 'buy' | 'historyUnbind',
@@ -335,7 +363,12 @@ export function Sidebar({
     await navigator.clipboard.writeText(paste)
     flashCopied(kind)
     remember(paste)
+    trackGoal('copy_bind', { kind })
     if (kind === 'buy') onCommitBuyBind()
+    if (kind === 'buy' || kind === 'all' || kind === 'binds') {
+      setShareToast(m.sidebar.shareAfterCopy)
+      window.setTimeout(() => setShareToast(null), 8000)
+    }
   }
 
   const clearHistory = () => {
@@ -378,8 +411,31 @@ export function Sidebar({
   const compactCommands =
     isUtilities && utilityActiveId === 'practice'
 
+  const shareHint =
+    shareToast === m.sidebar.shareAfterCopy ? (
+      <div className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-3 py-2">
+        <p className="text-[11px] leading-relaxed text-[var(--accent)]">
+          {shareToast}
+        </p>
+        <button
+          type="button"
+          onClick={() => void copyShareLink()}
+          className="mt-2 w-full rounded border border-[var(--accent)]/60 bg-black/30 px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--accent)] hover:border-[var(--accent)]"
+        >
+          {m.sidebar.shareFriend}
+        </button>
+      </div>
+    ) : shareToast ? (
+      <div className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-3 py-2">
+        <p className="text-[11px] leading-relaxed text-[var(--accent)]">
+          {shareToast}
+        </p>
+      </div>
+    ) : null
+
   return (
     <div className="flex flex-col gap-4">
+      {shareHint}
       {isIdle && (
         <Panel title={m.guide.openTitle}>
           <p className="text-[12px] leading-relaxed text-[#9ca3af]">

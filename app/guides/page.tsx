@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import { SEO_LANDINGS } from '../../src/data/seoLandings'
 import type { SeoGroup } from '../../src/data/seoTopicTemplates'
+import {
+  accentColorForTopic,
+  withAlpha,
+} from '../../src/data/seoTheme'
 import { SITE_NAME, SITE_URL } from '../../seo.config'
 
 export const metadata: Metadata = {
@@ -58,18 +62,29 @@ export default function GuidesHubPage() {
                 </span>
               </h2>
               <ul className="mt-4 max-h-[28rem] space-y-2 overflow-y-auto pr-1">
-                {items.map((landing) => (
-                  <li key={landing.path}>
-                    <a
-                      href={landing.path}
-                      className="block rounded-lg border border-zinc-700/80 bg-zinc-900/60 px-3 py-2 text-sm transition hover:border-zinc-500 hover:bg-zinc-800/70"
-                    >
-                      <span className="font-medium text-zinc-300">
-                        {landing.h1}
-                      </span>
-                    </a>
-                  </li>
-                ))}
+                {items.map((landing) => {
+                  const accent = accentColorForTopic(landing.topic)
+                  return (
+                    <li key={landing.path}>
+                      <a
+                        href={landing.path}
+                        className="block rounded-lg border bg-zinc-900/60 px-3 py-2 text-sm transition hover:bg-zinc-800/70"
+                        style={{
+                          borderColor: withAlpha(accent, 0.35),
+                          borderLeftWidth: 3,
+                          borderLeftColor: accent,
+                        }}
+                      >
+                        <span
+                          className="font-medium"
+                          style={{ color: accent }}
+                        >
+                          {landing.h1}
+                        </span>
+                      </a>
+                    </li>
+                  )
+                })}
               </ul>
             </section>
           )

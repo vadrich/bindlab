@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { trackGoal } from '../analytics'
 import { useAuth } from '../auth/AuthContext'
 import { useMessages } from '../i18n/I18nProvider'
 
@@ -68,6 +69,7 @@ export function AuthForm({ variant = 'panel' }: Props) {
         disabled={busy}
         onClick={() => {
           clearError()
+          trackGoal('google_sign_in')
           void signInGoogle()
         }}
         className={
@@ -91,7 +93,10 @@ export function AuthForm({ variant = 'panel' }: Props) {
       <button
         type="button"
         disabled={busy}
-        onClick={() => enterAsGuest()}
+        onClick={() => {
+          trackGoal('guest_enter')
+          enterAsGuest()
+        }}
         className={
           gate
             ? 'w-full rounded-lg border border-zinc-500/50 bg-zinc-800/50 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-zinc-200 transition-colors hover:border-zinc-400 hover:bg-zinc-700/50 disabled:opacity-50'

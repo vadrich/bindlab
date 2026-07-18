@@ -91,7 +91,11 @@ export const zh: Messages = {
     unbindHistoryEmpty: '暂无按键 — 请先复制绑定，或从个人资料加载含绑定的配置。',
     unbindHistoryKeys: '将解绑的按键',
     activeUtility: '当前',
+    shareAfterCopy: en.sidebar.shareAfterCopy,
+    shareFriend: en.sidebar.shareFriend,
+    shareLinkCopied: en.sidebar.shareLinkCopied,
   },
+  buyPresets: en.buyPresets,
   utilHome: {
     tip: '设置与绑定会用 “;” 连成一行，CS2 控制台 (~) 可一次执行。用卡片选择分区。',
     settingsTitle: '设置',
